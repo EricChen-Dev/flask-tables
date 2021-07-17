@@ -1,0 +1,112 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 首页表格 - Main Table {% endblock %}
+
+{# HTML body内容 #}
+{% block body %}
+<div id="table">
+    <el-row>
+
+
+        <el-input v-model="search" size="small" placeholder="输入病人姓名、病人ID、识别码搜索" @change="searchChanged">
+            <template slot="prepend">快速搜索</template>
+        </el-input>
+
+    </el-row>
+
+
+    <el-table :data="tempList" style="width: 100%" ref="index_table" max-height="1000" :key="table_key">
+
+        <el-table-column type="index" label="序号" width="50">
+        </el-table-column>
+
+        </el-table-column>
+
+        <el-table-column prop="id" label="识别码">
+
+        </el-table-column>
+        <el-table-column prop="patient_id" label="病人ID">
+
+        </el-table-column>
+        <el-table-column prop="patient_name" label="病人姓名">
+
+        </el-table-column>
+        <el-table-column prop="incoming_date" label="入院日期">
+
+        </el-table-column>
+        <el-table-column prop="out_date" label="出院日期">
+        </el-table-column>
+
+        <el-table-column prop="total_expense" label="总费用">
+
+        </el-table-column>
+
+        <el-table-column label="操作" width="80">
+            <template slot-scope="scope">
+                <el-button @click.native.prevent="editRow(scope.row)" {# 编辑按钮传入方法及参数 #} type="text" size="small">
+                    编辑
+                </el-button>
+
+            </template>
+        </el-table-column>
+
+    </el-table>
+
+
+    <el-pagination v-if="search===''" @size-change="handleSizeChange" {# 处理每页显示条数 #}
+        @current-change="handleCurrentChange" {# 处理跳转到第n页 #} :current-page="currentPage" {# 现在所在页面页码 #}
+        :page-sizes="[10,20,50,100]" {# 每页显示条数选项 #} :page-size="pageSize" {# 默认显示n条记录 #}
+        layout="total, sizes, prev, pager, next, jumper" {# 分页控件布局 #} :total="totalRecordsCount" {# 总计记录条数 #}>
+    </el-pagination>
+
+    {#        搜索结果时用的页码#}
+    <el-pagination v-else @size-change="handleSizeChange" {# 处理每页显示条数 #} @current-change="handleCurrentChange"
+        {# 处理跳转到第n页 #} :current-page="handleSearchResultCurrentChange" {# 现在所在页面页码 #} :page-sizes="[10,20,50,100]"
+        {# 每页显示条数选项 #} :page-size="pageSize" {# 默认显示n条记录 #} layout="total, sizes, prev, pager, next, jumper"
+        {# 分页控件布局 #} :total="searchResultCount" {# 搜索结果记录条数 #}>
+    </el-pagination>
+
+    <el-dialog title="编辑" :visible.sync="dialogFormVisible">
+        <el-form :model="editingForm" style="width: 90%" ref="editingForm">
+            <el-form-item label="识别码" :label-width="formLabelWidth">
+                <el-input v-model="editingForm.id" :readonly="true"></el-input>
+            </el-form-item>
+            <el-form-item label="病人ID" :label-width="formLabelWidth">
+                <el-input v-model="editingForm.patient_id" :readonly="true"></el-input>
+            </el-form-item>
+            <el-form-item label="病人姓名" :label-width="formLabelWidth">
+                <el-input v-model="editingForm.patient_name"></el-input>
+            </el-form-item>
+            <el-form-item label="入院日期" :label-width="formLabelWidth">
+                <el-date-picker v-model="editingForm.incoming_date" type="date" placeholder="选择入院日期"
+                    value-format="yyyy-MM-dd"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="出院日期" :label-width="formLabelWidth">
+                <el-date-picker v-model="editingForm.out_date" type="date" placeholder="选择出院日期"
+                    value-format="yyyy-MM-dd"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="总费用" :label-width="formLabelWidth">
+                <el-input-number v-model="editingForm.total_expense" :controls="false"></el-input-number>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="submit">提 交</el-button>
+        </div>
+    </el-dialog>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    let metaTableListData = {{tableData|tojson}}; //js得到服务器端数据
+</script>
+<script src="/static/js/main_table.js"></script>
+
+
+{% endblock %}

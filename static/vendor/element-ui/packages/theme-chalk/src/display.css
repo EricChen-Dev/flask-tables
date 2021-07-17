@@ -1,0 +1,18 @@
+/* Error: expected "(".
+ *   ,
+ * 9 |     @media only screen and "(min-width: 768px) and (max-width: 991px)"{
+ *   |                            ^
+ *   '
+ *   mixins/mixins.scss 9:28  res()
+ *   display.scss 7:7         root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: 'Error: expected "(".\a   \2577 \a 9 \2502      @media only screen and "(min-width: 768px) and (max-width: 991px)"{\a   \2502                             ^\a   \2575 \a   mixins/mixins.scss 9:28  res()\a   display.scss 7:7         root stylesheet';
+}

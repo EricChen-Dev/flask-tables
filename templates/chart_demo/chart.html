@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Chart Demo</title>
+</head>
+
+<body>
+    <div class="chart-container" style="position: relative; height:40vh; width:100%;">
+        <canvas id="chart"></canvas>
+    </div>
+</body>
+
+<!-- {#引入chart js#} -->
+<script src="/static/vendor/jQuery/jquery.min.js"></script>
+<script type="text/javascript" src="/static/vendor/chart/chart.min.js"></script>
+
+<script>
+    let ctx = document.getElementById('chart');
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+    let metaData = [65, 59, 80, 81, 56, 55, 60]
+    let data = {
+        labels: labels,
+        datasets: [{
+            label: 'Chart Demo',
+            data: metaData,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(255, 159, 64, 0.7)',
+                'rgba(255, 205, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(201, 203, 207, 0.7)'
+            ],
+            borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(201, 203, 207)'
+            ],
+            borderWidth: 3
+        }]
+    }
+    var config = {
+        type: 'bar',
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+    };
+    var chart = new Chart(ctx, config);
+
+
+
+    function getData() {
+        // 这里结合后端运行得到数据
+        return $.ajax({
+            url: '/updateData', // 默认发送GET请求
+            success: function (data) {
+                metaData[6] = data.data;
+                chart.update();
+            }
+
+        })
+    }
+
+    function getDataTest() {
+        return metaData[6] + 5;
+    }
+
+    window.onload = function () {
+        // 载入完成后加入个内循环计时
+        const interval = setInterval(function () {
+            getData();
+        }, 3000)
+    }
+</script>
+
+</html>

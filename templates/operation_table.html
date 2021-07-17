@@ -1,0 +1,135 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 手术表格 - Operation Table {% endblock %}
+{# HTML body内容 #}
+{% block body %}
+    <div id="table">
+        <el-row>
+
+
+            <el-input
+                    v-model="search"
+                    size="small"
+                    placeholder="输入病人姓名、病人ID、识别码搜索"
+            >
+                <template slot="prepend">快速搜索</template>
+            </el-input>
+
+        </el-row>
+        <el-table
+                :data="table_data.filter(data => !search || data.patient_name.toLowerCase().includes(search.toLowerCase()) || data.patient_id.toLowerCase().includes(search.toLowerCase()) || data.id.toLowerCase().includes(search.toLowerCase()))"
+{#                default-sort="{prop: incoming_date, order: 'descending'}"这里可以设置默认排序状态，以入院日期倒序为例，也可以自建一个排序方法#}
+        >
+
+            <el-table-column
+                    type="index"
+                    label="序号"
+            >
+
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="识别码"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="patient_id"
+                    label="病人ID"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="patient_name"
+                    label="病人姓名"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="incoming_date"
+                    label="入院日期"
+                    sortable
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="out_date"
+                    label="出院日期"
+                    sortable
+            >
+
+            </el-table-column>
+
+            <el-table-column
+                    prop="total_expense"
+                    label="总费用"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="hospitalised_id"
+                    label="住院号"
+            >
+
+            </el-table-column>
+
+            <el-table-column
+                    prop="operation_date"
+                    label="手术日期"
+                    sortable
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="operation_index"
+                    label="手术序号"
+                    :filters="operation_index_filters"
+                    :filter-method="filter_operation_index"
+                    filter-placement="bottom-end"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="operation_sort_id"
+                    label="手术排序"
+                    sortable
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="operation_id"
+                    label="手术编号"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="operation_type"
+                    label="手术类型"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="operation_name"
+                    label="手术名称"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="anesthesia_method"
+                    label="麻醉方法"
+            >
+
+            </el-table-column>
+        </el-table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let metaTableListData = {{ tableData|tojson }};
+    </script>
+    <script src="/static/js/operation_table.js"></script>
+
+
+{% endblock %}

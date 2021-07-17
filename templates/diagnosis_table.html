@@ -1,0 +1,77 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 诊断表格 - Diagnosis Table {% endblock %}
+{# HTML body内容 #}
+{% block body %}
+    <div id="table">
+        <el-table
+                :data="table_data"
+        >
+
+            <el-table-column
+                    type="index"
+                    label="序号"
+            >
+
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="识别码"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="patient_id"
+                    label="病人ID"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="patient_name"
+                    label="病人姓名"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="incoming_date"
+                    label="入院日期"
+            >
+
+            </el-table-column>
+            <el-table-column
+                    prop="out_date"
+                    label="出院日期"
+            >
+
+            </el-table-column>
+
+            <el-table-column
+                    prop="diagnosis_id"
+                    label="诊断编码"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="diagnosis_index"
+                    label="序号"
+            ></el-table-column>
+            <el-table-column
+                    prop="diagnosis_type"
+                    label="诊断类型"
+            >
+
+            </el-table-column>
+
+        </el-table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let metaTableListData = {{ tableData|tojson }};
+    </script>
+    <script src="/static/js/diagnosis_table.js"></script>
+
+
+{% endblock %}
