@@ -3,7 +3,7 @@ var formVue = {
         return {
             form: {},   //表单数据存放
             isCollapse: false,  //导航栏默认展开状态
-            options: {},    //表单选项
+            options: {},    //表单字段可选项
             rules: {}, //表单验证规则
             active: "",
             focused: "",
@@ -36,9 +36,6 @@ var formVue = {
                 }
             });
         },
-        inputs(value){
-            console.log(value)
-        }
     },
     beforeMount() {
         // 初始化表单规则，别删那个temp
@@ -46,7 +43,15 @@ var formVue = {
         for (let key in zdm) {
             for (let item of zdm[key]) {
                 // 这里可以预填表格
-                temp[item[1]] = undefined;
+                if (item[3] === '字符串') {
+                    temp[item[1]] = '';
+                } else if (item[3] === '数组') {
+                    temp[item[1]] = [];
+                }
+                else{
+                    temp[item[1]] = undefined;
+                }
+                // temp[item[1]] = undefined;
                 // 根据第五列是否为必填
                 if (item[4] === "是") {
                     // 如果是'是'，则在rules新建规则字典，key为id，如CS-1-1-1
@@ -72,11 +77,12 @@ var formVue = {
         }
 
     },
-    mounted(){
+    mounted() {
     }
 };
 
+// 这里更改了Vue的分隔符识别，{{ }}和jinja冲突
+Vue.options.delimiters = ['{*', '*}'];
 var form = Vue.extend(formVue);
-
 //这里是vue加载到html的id位置
 new form().$mount('#new_pgc_form')

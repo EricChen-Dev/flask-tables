@@ -29,17 +29,20 @@ def reorganise(groups, zdm):
 	CS-1: ['26', 'CS-1-1-1', '产次', '字符串', '是', 'null', 'not null', 'varchar(max)', ...]
 	"""
 	organised_zdm = dict()
+	optioned = dict()
 	for group in groups:
 		# 为每个信息新建空组，键值为前缀，如 CS-1
 		organised_zdm[str(group).split(' ')[0]] = []
 
 	for data in zdm:
 		key = data[1][0:4]  # 键值 如CS-1
+		if data[9]:
+			data[9] = str(data[9]).lower()  # 转小写
 		if organised_zdm.get(key) is not None:
 			# 如果存在这个分类就归入这个分类下
 			organised_zdm.get(key).append(data)
 		else:
-			# 归入基本信息分类
+			# 其他情况，如果字段中有CM、caseId、SBM、IDCard归入基本信息
 			organised_zdm.get("基本信息").append(data)
 
 	return organised_zdm
