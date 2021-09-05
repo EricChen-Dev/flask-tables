@@ -104,8 +104,10 @@ def create_app():
 			if request.method != 'POST':
 				return render_template('login.html')
 			else:
-				username = request.form.get('username')
-				password = request.form.get('password')
+				request_data = json.loads(request.data)
+				# 取得输入的账号和密码
+				username = request_data['username']
+				password = request_data['password']
 				generatedUser = User.query.filter(User.username == username).first()
 				if generatedUser:
 					if UserManager.verify_password(self, password, generatedUser.password):
