@@ -60,7 +60,7 @@
                 loginResult(data, status) {
                     console.log(data);
                     if (data['outcome']) {
-                        window.href.location = data.next;
+                        window.location.href = data.next;
                     } else {
                         this.openNoti();
                     }
