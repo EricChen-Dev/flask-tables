@@ -66,8 +66,8 @@
                                     label="{{ item[2] }}"
                                     id="{{ item[1] }}"
                                     prop="{{ item[1] }}"
-                                    {# v-show为此条出现条件 #}
-                                    v-show="'{{ item[8] }}'=='' || form['{{ item[8] }}']=='{{ item[9] }}'|| form['{{ item[8] }}'].includes('{{ item[9] }}')">
+                                    {# v-if为此条出现条件 #}
+                                    v-if="'{{ item[8] }}'=='' || form['{{ item[8] }}']=='{{ item[9] }}'|| form['{{ item[8] }}'].includes('{{ item[9] }}')">
                                 {% if existsInLists(item[1], xz) and item[3] != '数组' %}
                                     {# 如果xz有输入要求#}
                                     {# 如果在xz中可以选择 #}
@@ -159,7 +159,7 @@
 
 {% block script %}
     {#    sidebar 部件#}
-    <script src="/static/vendor/vuesax/dist/vuesax.min.js"></script>
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
 
     <script>
         let zdm = {{zdm|tojson}}; //js得到服务器端数据

@@ -17,13 +17,18 @@ var tablesVue = {
             editingForm: {}, //正在编辑的数据
             formLabelWidth: '150px', //表单标签宽度
 
-            table_key: '' //临时变量
+            table_key: '', //临时变量
+
+            loading: true
         };
     },
     methods: {
         editRow(row) {
             this.editingForm = Object.assign({}, row);
             this.dialogFormVisible = true;
+        },
+        goToReport(row) {
+            window.location.href = "/report?sbm=" + row.SBM;
         },
         handleSizeChange(newPageSize) {
             //每页条数切换
@@ -56,60 +61,67 @@ var tablesVue = {
             }
         },
         submit() {
+            // 提交更改信息
+
             // 载入动画和更改前端表格数据
-            let load = this.loading();
-            var index = this.table_data.findIndex((value) => value.id === this.editingForm.id);
+            let load = this.loading_animation;
+
+            //更改现有表格中的数据
+            var index = this.table_data.findIndex((value) => value.SBM === this.editingForm.SBM);
             this.table_data[index] = Object.assign({}, this.editingForm);
-            let index_in_temp = this.tempList.findIndex((value) => value.id === this.editingForm.id);
+            let index_in_temp = this.tempList.findIndex((value) => value.SBM === this.editingForm.SBM);
             this.tempList[index_in_temp] = Object.assign({}, this.editingForm);
-            let vueInstance = document.getElementById("table").__vue__;
 
 
             // 提交表格至后端
-            $.ajax({
-                url: '/main/edit?id=' + this.editingForm.id,
-                data: JSON.stringify(this.editingForm),
-                type: 'POST',
-                contentType: "application/json",
-                success: function (request) {
-                    // Vue.prototype.$message.success("编辑成功");
-                    Vue.prototype.$message.success("编辑成功，服务器传回消息：" + request.msg);
+            console.log(this.editingForm);
 
-                    //关闭对话框
-                    vueInstance.dialogFormVisible = false;
-
-                },
-                error: function (request) {
-                    // Vue.prototype.$message.error("悲催，错误发生！！");
-                    Vue.prototype.$message.error("错误，服务器传回消息：" + request.msg);
-                },
-                complete: function () {
-                    load.close(); //关闭loading动画
-                }
+            axios.post('/main/edit', this.editingForm).then(response => {
+                this.$message.success("编辑成功，服务器传回消息：" + response.data.msg);
+                this.dialogFormVisible = false;
+                load.close;
+            }).catch(error => {
+                this.$message.error("错误，服务器传回消息：" + error.response.data.msg)
             });
+
             this.table_key = Math.random(); //强制刷新表格
 
         },
-        searchChanged(search) {
-            //当搜索值变动时
-
+        selectPatient(patient) {
             //启动搜索动画
-            let load = this.loading();
-
-            if (search !== '') {
-                this.searchResultData = this.table_data.filter(data => !search || data.patient_name.toLowerCase().includes(search.toLowerCase()) || data.patient_id.toLowerCase().includes(search.toLowerCase()) || data.id.toLowerCase().includes(search.toLowerCase()));
-                this.searchResultCount = this.searchResultData.length;
-                this.currentPageChangeInner(this.searchResultData, this.searchResultCurrentPage)
-            } else {
+            let load = this.loading_animation;
+            this.currentPageChangeInner(this.searchResultData, this.searchResultCurrentPage)
+            //搜索动画关闭
+            load.close;
+        },
+        changeTo(queryString) {
+            if (queryString === '') {
                 this.searchResultData = this.table_data;
                 this.totalRecordsCount = this.table_data.length
                 this.currentPageChangeInner(this.table_data, this.currentPage)
             }
-
-            //搜索动画关闭
-            load.close();
         },
-        loading() {
+        querySearchAsync(queryString, callback) {
+            let load = this.loading_animation;
+            console.log("query: " + queryString);
+            if (queryString === '') {
+                this.searchResultData = this.table_data;
+                this.totalRecordsCount = this.table_data.length
+                this.currentPageChangeInner(this.table_data, this.currentPage)
+            } else {
+                //发送查询请求
+                axios.get('/main/get_patients?query=' + queryString).then(response => {
+                    callback(this.onQuerySuccess(response.data));
+                });
+            }
+            load.close;
+        },
+        onQuerySuccess(data) {
+            this.searchResultData = Object.assign([], JSON.parse(data.data));
+            this.searchResultCount = this.searchResultData.length;
+            return this.searchResultData;
+        },
+        loading_animation() {
             // loading动画instance
             return this.$loading({
                 lock: true,
@@ -118,8 +130,10 @@ var tablesVue = {
                 background: 'rgba(255,255,255, 0.6)'
             });
         },
+
     },
     mounted() {
+        this.loading = true;
         // mounted最开始运行，将数据解析为json为js可用，并运行第一次currentPageChangeInner()
         this.table_data = JSON.parse(metaTableListData);
         this.totalRecordsCount = this.table_data.length;

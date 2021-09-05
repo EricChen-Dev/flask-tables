@@ -1,8 +1,6 @@
 import datetime
 import json
 import re
-from uuid import uuid4  # uuid4() 随机独立id
-
 from TableTypes import Table_Type
 
 
@@ -24,12 +22,12 @@ class Patient:
 	             diagnosis_id='',
 	             diagnosis_type='',
 	             diagnosis_index=''):
-		self.id = Id  # 识别码
-		self.patient_id = patient_id  # 病人ID
-		self.patient_name = patient_name  # 病人姓名
-		self.incoming_date = incoming_date  # 入院日期
-		self.out_date = out_date  # 出院日期
-		self.total_expense = total_expense  # 总费用
+		self.SBM = Id  # 识别码
+		self.IDH = patient_id  # 病人ID
+		self.XM = patient_name  # 病人姓名
+		self.RYSJ = incoming_date  # 入院日期
+		self.CYSJ = out_date  # 出院日期
+		self.ZFY = total_expense  # 总费用
 		self.hospitalised_id = hospitalised_id  # 住院号
 		self.operation_date = operation_date  # 手术日期
 		self.operation_index = operation_index  # 手术序号
@@ -47,33 +45,33 @@ class Patient:
 		return self.__dict__
 
 
-def mapper(csvReader, TableType):
+def mapper(dbCursor, TableType):
 	patientList = []
 	count = 0
-	for row in csvReader:
-		if not count == 0:  # 忽略第一行
-			if TableType == Table_Type.MAIN:  # 数据为首页数据
-				patientList.append(
-					Patient(Id=str(uuid4()), patient_id=row[280], patient_name=row[6],
-					        incoming_date=StrToDateStr(row[33]), out_date=StrToDateStr(row[37]),
-					        total_expense=row[234])
-				)  # 这里可以将时间转换或者选择字符形式
-			# 数据筛选
-			elif TableType == Table_Type.OPERATION:
-				patientList.append(
-					Patient(Id=str(uuid4()), patient_id=row[0], patient_name=row[1], incoming_date=StrToDateStr(row[2]),
-					        out_date=StrToDateStr(row[3]),
-					        hospitalised_id=row[4], operation_date=StrToDateStr(row[5]), operation_index=row[6],
-					        operation_sort_id=row[7], operation_id=row[8], operation_type=row[9],
-					        operation_name=row[10], anesthesia_method=row[11]))
+	for row in dbCursor:
+		if TableType == Table_Type.MAIN:  # 数据为首页数据
 
-			elif TableType == Table_Type.DIAGNOSIS:
-				print(row)
-				patientList.append(
-					Patient(Id=str(uuid4()), patient_id=row[0], patient_name=row[1], incoming_date=StrToDateStr(row[3]),
-					        out_date=StrToDateStr(row[4]), diagnosis_id=row[7], diagnosis_index=row[5],
-					        diagnosis_type=row[6]))
-		count += 1
+			# 如果是数据库的date类型可以直接用不用转换
+			patientList.append(
+				Patient(Id=row[0], patient_id=row[280], patient_name=row[6],
+				        incoming_date=row[33], out_date=row[37],
+				        total_expense=row[234])
+			)  # 这里可以将时间转换或者选择字符形式
+		# 数据筛选
+		elif TableType == Table_Type.OPERATION:
+			patientList.append(
+				Patient(Id=row[0], patient_id=row[0], patient_name=row[1], incoming_date=StrToDateStr(row[2]),
+				        out_date=row[3],
+				        hospitalised_id=row[4], operation_date=StrToDateStr(row[5]), operation_index=row[6],
+				        operation_sort_id=row[7], operation_id=row[8], operation_type=row[9],
+				        operation_name=row[10], anesthesia_method=row[11]))
+
+		elif TableType == Table_Type.DIAGNOSIS:
+			patientList.append(
+				Patient(Id=row[0], patient_id=row[0], patient_name=row[1], incoming_date=StrToDateStr(row[3]),
+				        out_date=StrToDateStr(row[4]), diagnosis_id=row[7], diagnosis_index=row[5],
+				        diagnosis_type=row[6]))
+	count += 1
 
 	# 将Patient对象序列化
 	return json.dumps(patientList, default=lambda o: o.toJSON())

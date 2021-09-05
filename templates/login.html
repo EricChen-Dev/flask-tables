@@ -1,0 +1,82 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 登录 {% endblock %}
+{% block other_head %}
+    <link href="/static/vendor/vuesax3/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    <link href="/static/style/login.css" rel="stylesheet">
+{% endblock %}
+
+{# HTML body内容 #}
+{% block body %}
+    <div id="login-form" style="margin-top: 20%;">
+        <template>
+            <vs-row vs-justify="center" style="vertical-align:center">
+                <vs-col type="flex" vs-justify="center" vs-align="center" vs-lg="3" vs-sm="6" vs-xs="10">
+                    <vs-card actionable>
+                        <div slot="header">
+                            <h3>登录</h3>
+                        </div>
+                        <div class="centerx">
+                            <vs-row vs-justify="center" style="margin-bottom: 20px">
+                                <vs-input size="large" label-placeholder="用户名" v-model="username"/>
+                                <br>
+                            </vs-row>
+                            <vs-row vs-justify="center">
+                                <vs-input size="large" label-placeholder="密码" v-model="password" type="password"/>
+                                <br>
+
+                            </vs-row>
+                        </div>
+                        <div slot="footer">
+                            <vs-row vs-justify="flex-end">
+                                <el-button type="primary" plain @click="submit" :loading="loading">登 录</el-button>
+                            </vs-row>
+                        </div>
+                    </vs-card>
+                </vs-col>
+            </vs-row>
+        </template>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/vendor/vuesax3/dist/vuesax.umd.min.js"></script>
+    <script>
+        var loginForm = {
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    loading: false,
+                }
+            },
+            methods: {
+                submit() {
+                    this.loading = true;
+                    $.post('/login', {username: this.username, password: this.password}, this.loginResult)
+                },
+                loginResult(data, status) {
+                    console.log(data);
+                    if (data['outcome']) {
+                        window.href.location = data.next;
+                    } else {
+                        this.openNoti();
+                    }
+                    this.loading = false;
+                },
+                openNoti() {
+                    this.$message.error('用户名密码无法匹配');
+                }
+            },
+            mounted() {
+            }
+        }
+        var form = Vue.extend(loginForm);
+
+        //这里是vue加载点html的id位置
+        new form().$mount('#login-form')
+    </script>
+
+{% endblock %}
