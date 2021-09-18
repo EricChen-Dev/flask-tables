@@ -1,0 +1,138 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 注册 {% endblock %}
+{% block other_head %}
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    <link href="/static/style/login.css" rel="stylesheet">
+{% endblock %}
+
+{# HTML body内容 #}
+{% block body %}
+    <div id="register-form" style="padding-top: 10%;">
+        <template>
+            <el-row type="flex" justify="center" align="middle">
+                <el-card type="flex" style="width: 500px" shadow="hover" align="middle">
+
+                    <h3>注册</h3>
+                    <div>
+                        <el-row type="flex" justify="center" align="middle" style="margin-top: 25px">
+                            <vs-input label-placeholder="用户名" v-model="username" autocomplete="off">
+                                <template #icon>
+                                    <i class='bx bx-user'></i>
+                                </template>
+                                <template v-if="validate[0]" #message-danger>必填项</template>
+                            </vs-input>
+
+                        </el-row>
+                        <el-row type="flex" justify="center" align="middle" style="margin-top: 25px">
+                            <vs-input label-placeholder="密码" v-model="password" type="password"
+                                      autocomplete="off">
+                                <template #icon>
+                                    <i class='bx bx-lock-open-alt'></i>
+                                </template>
+                                <template v-if="validate[1]" #message-danger>必填项</template>
+                            </vs-input>
+
+                        </el-row>
+
+
+                        <el-row type="flex" justify="center" align="middle" style="margin-top: 25px">
+                            <vs-input label-placeholder="姓名" v-model="xm">
+                                <template v-if="validate[2]" #message-danger>必填项</template>
+
+                            </vs-input>
+                            <br>
+                        </el-row>
+
+                        <el-row type="flex" justify="center" align="middle" style="margin-top: 25px">
+                            <vs-select label-placeholder="科室" v-model="major">
+                                <vs-option v-for="option in majorSelection" :label="option"
+                                           :value="option">
+                                    {* option *}
+                                </vs-option>
+                                <vs-option label="Nodejs" value="7">
+                                    Nodejs
+                                </vs-option>
+
+                                <template v-if="validate[3]" #message-danger>必填项</template>
+
+                            </vs-select>
+                        </el-row>
+                    </div>
+                    <div>
+                        <el-row type="flex" justify="center" align="middle" style="margin-top: 25px">
+                            <el-button size="small" round plain @click="submit" :loading="submit_loading">注 册
+                            </el-button>
+                        </el-row>
+                    </div>
+                </el-card>
+            </el-row>
+        </template>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/vendor/axios/dist/axios.min.js"></script>
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+    <script>
+        var registerForm = {
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    xm: '',
+                    major: '',
+                    submit_loading: false,
+                    validate: [false, false, false, false],
+                    majorSelection: ['心血管内科', '血液内科', '风湿免疫科', '消化内科', '呼吸内科', '肾内科', '内分泌代谢科', '神经内科', '神经外科', '心胸血管外科', '胸部外科', '心胸血管外科监护单元', '脊柱外科', '关节·运动医学外科', '创伤显微手外科', '泌尿外一科', '泌尿外二科', '肝胆胰脾外科', '乳腺甲状腺外科', '胃肠·疝·肠瘘外科', '结直肠·肛门外科', '小儿外科', '妇科一区', '妇科二区', '产科', '儿科', '新生儿·儿科监护病房', '耳鼻咽喉头颈科', '眼科', '口腔颌面外科', '皮肤性病科', '肿瘤中心放疗病区', '肿瘤中心化疗一病区', '肿瘤中心化疗二病区', '普通介入诊疗病区', '内分泌代谢科干部病区·老年内分泌代谢科', '神经内科干部病区·老年神经内科', '心血管内科干部病区·老年心血管内科', '全科医学科病房', '急诊病房', '急诊监护病房', '康复医学科', '重症医学科一病区', '重症医学科二病区', '中医科', '移植科', '国际医疗部']
+                }
+            },
+            methods: {
+                submit() {
+                    this.loading = true;
+                    console.log(this.username, this.xm, this.major)
+                    if (this.username !== '' && this.password !== '' && this.xm !== '' && this.major !== '') {
+                        axios.post('/register', {
+                            username: this.username,
+                            password: this.password,
+                            xm: this.xm,
+                            major: this.major
+                        })
+                            .then(response => {
+                                console.log(response)
+                                if (response.data.outcome) {
+                                    window.location.href = response.data.next;
+                                } else {
+                                    this.$message.error(response.data.msg);
+                                }
+                                this.loading = false;
+
+                            })
+                    } else {
+                        this.validate[0] = this.username === '';
+
+                        this.validate[1] = this.password === '';
+
+                        this.validate[2] = this.xm === '';
+
+                        this.validate[3] = this.major === '';
+                    }
+                    this.loading = false;
+
+                    this.$forceUpdate()
+                },
+            },
+            mounted() {
+            }
+        }
+
+        Vue.options.delimiters = ['{*', '*}'];
+
+        var form = Vue.extend(registerForm);
+        //这里是vue加载点html的id位置
+        new form().$mount('#register-form')
+    </script>
+
+{% endblock %}

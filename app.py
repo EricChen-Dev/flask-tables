@@ -75,14 +75,15 @@ def create_app():
 
 		# 用户信息
 		xm = db.Column(db.String(30, collation='NOCASE'), nullable=False, server_default='')
-		active = db.Column(db.Boolean())
+		major = db.Column(db.String(255), nullable=False, server_default='')
+		active = db.Column(db.Boolean(), default=True)
 		# 用户角色
 		roles = db.relationship('Role', secondary='user_roles')
 
 	class Role(db.Model):
 		__tablename__ = 'roles'
 		id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-		name = db.Column(db.String(50), unique=True)
+		name = db.Column(db.String(50))
 
 	class UserRoles(db.Model):
 		__tablename__ = 'user_roles'
@@ -125,28 +126,35 @@ def create_app():
 
 		def register_view(self):
 			"""注册新用户"""
-			safe_reg_next_url = self._get_safe_next_url('reg_next', self.USER_AFTER_REGISTER_ENDPOINT)
+			safe_reg_next_url = request.args.get('next') if request.args.get('next') else '/main'
 			if request.method != 'POST':
-				# return render_template('login.html')
-				return "registration page"
+				return render_template('register.html')
 			else:
-				username = request.form.get('username')
-				password = request.form.get('password')
-				xm = request.form.get('xm')
+				# 处理注册请求
+				request_data = json.loads(request.data)
+
+				username = request_data['username']
+				password = request_data['password']
+				xm = request_data['xm']
+				major = request_data['major']
 
 				if not User.query.filter(User.username == username).first():
 					# 如果这个用户名不存在，新建用户并保存至数据库
 					new_user = User(id=str(uuid.uuid4()), username=username,
 					                password=user_manager.hash_password(password),
-					                xm=xm)
+					                xm=xm, major=major)
 					new_user.roles.append(Role(name='Other_Role'))  # 这里赋予角色
-					new_user.roles.append(Role(name='Other_Role2'))  # 这里赋予角色
+					# new_user.roles.append(Role(name='Other_Role2'))  # 这里赋予角色
 					db.session.add(new_user)
 					db.session.commit()
 					if self.USER_AUTO_LOGIN_AFTER_REGISTER:
-						return self._do_login_user(new_user, '/')
+						login_user(new_user, safe_reg_next_url)
+						return {'outcome': True, 'next': safe_reg_next_url}
 					else:
-						return redirect('/login')
+						return {'outcome': True, 'next': '/login'}
+
+				else:
+					return {'outcome': False, 'msg': '用户名已被占用'}
 
 		def unauthorized_view(self):
 			return abort(401)

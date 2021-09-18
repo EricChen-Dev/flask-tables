@@ -1,35 +1,23 @@
 {
-  "_from": "vuesax@next",
-  "_id": "vuesax@4.0.1-alpha.25",
-  "_inBundle": false,
-  "_integrity": "sha512-cVLpKsem/YsMSbiy2s2M0O6rr8wrakOUFn0JYxtVQ1WgbVUD0/kU2/GMPVeRBNOh+30tRy2TKreFmjqc53vIBQ==",
-  "_location": "/vuesax",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "vuesax@next",
-    "name": "vuesax",
-    "escapedName": "vuesax",
-    "rawSpec": "next",
-    "saveSpec": null,
-    "fetchSpec": "next"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/vuesax/-/vuesax-4.0.1-alpha.25.tgz",
-  "_shasum": "2fb97ac8e4f3d479622d2dc6b498e5e57d44495d",
-  "_spec": "vuesax@next",
-  "_where": "/Users/eric/Documents/Projects/Website/Node_Test",
-  "author": "",
-  "bundleDependencies": false,
-  "dependencies": {
-    "vue-router": "^3.3.4"
-  },
-  "deprecated": false,
+  "name": "vuesax",
+  "version": "4.0.1-alpha.25",
   "description": "Framework components for vuejs",
+  "main": "dist/vuesax.js",
+  "scripts": {
+    "build": "node build/index.js",
+    "build:components": "npx webpack --config build/components/webpack.component.js",
+    "test": "jest",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "new:component": "node scripts/newComponent.js",
+    "new:sub": "node scripts/newSubComponent.js",
+    "postinstall": "node scripts/postinstall.js",
+    "dev": "tsc -w src/index.ts --module es6",
+    "test:types": "tsc -p ./types/test/tsconfig.json",
+    "deploy": "npm run build && npm version prerelease --preid=alpha && npm publish --tag next"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
@@ -81,21 +69,7 @@
     "webpack-merge": "^4.2.2",
     "webpackbar": "^4.0.0"
   },
-  "keywords": [],
-  "license": "ISC",
-  "main": "dist/vuesax.js",
-  "name": "vuesax",
-  "scripts": {
-    "build": "node build/index.js",
-    "build:components": "npx webpack --config build/components/webpack.component.js",
-    "deploy": "npm run build && npm version prerelease --preid=alpha && npm publish --tag next",
-    "dev": "tsc -w src/index.ts --module es6",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
-    "new:component": "node scripts/newComponent.js",
-    "new:sub": "node scripts/newSubComponent.js",
-    "postinstall": "node scripts/postinstall.js",
-    "test": "jest",
-    "test:types": "tsc -p ./types/test/tsconfig.json"
-  },
-  "version": "4.0.1-alpha.25"
+  "dependencies": {
+    "vue-router": "^3.3.4"
+  }
 }
