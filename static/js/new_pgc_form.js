@@ -76,6 +76,24 @@ var formVue = {
             }
         }
 
+        // 预填表格 - hard code
+        this.form["SBM"] = patient["SBM"];
+        this.form["CM-0-1-1-1"] = patient["ZKYS"] //质控医师
+        this.form["CM-0-1-1-2"] = patient["ZKHS"] //质控护士
+        this.form["CM-0-1-1-3"] = patient["ZZYS"] //主治医师
+        this.form["CM-0-1-1-4"] = patient["ZRHS"] //责任护士
+        this.form["CM-0-1-1-5"] = major //上报科室
+        this.form["caseId"] = patient["BAH"] //患者病案号
+        this.form["IDCard"] = patient["SFZH"] //患者身份证号
+        this.form["CM-0-2-1-1"] = patient["CSNYR"] //出生年月日
+        this.form["CM-0-2-1-6"] = patient["XSDCSTZ"] //新生儿出生体重（克）
+        this.form["CM-0-2-4-1"] = patient["RYSJ"] //入院日期时间
+        this.form["CM-0-2-4-2"] = patient["CYSJ"] //出院日期时间
+        // this.form["CM-0-3-1"] = patient["ZKYS"] //费用支付方式
+        // this.form["CM-0-1-1-1"] = patient["ZKYS"] //质控医师
+
+
+
     },
     mounted() {
     }

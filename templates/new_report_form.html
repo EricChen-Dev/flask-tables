@@ -165,7 +165,11 @@
         let zdm = {{zdm|tojson}}; //js得到服务器端数据
         let xz = {{xz|tojson}}; //js得到服务器端数据
         let groups =
-        {{ groups|tojson }} // 分组信息
+            {{ groups|tojson }}; // 分组信息
+        let patient =
+        {{ patient|tojson }}; //病人信息
+
+        let major = "{{ major }}"; //上传科室
 
     </script>
     <script src="/static/js/new_pgc_form.js"></script>

@@ -49,12 +49,10 @@ def new_form(operation_id):
 	if reported_sbm:
 		# 从数据库摘取这条信息
 
-		cursor_results = get_db().cursor().execute("select * from Patients where SBM='{0}'".format(
-			reported_sbm))
-		for result in cursor_results:
-			print(result)
-
-		return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups)
+		cursor_result = get_db().cursor().execute("select * from Patients where SBM='{0}'".format(
+			reported_sbm)).fetchone()
+		return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups,
+		                       patient=cursor_result, major=current_user.major)
 	else:
 		return 404
 
