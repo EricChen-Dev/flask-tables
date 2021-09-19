@@ -16,36 +16,44 @@
         <el-container>
             <h1></h1>
             <el-main style="height: calc(100vh - 120px); max-height:calc(100vh - 120px); scroll-behavior: smooth">
+                <el-row :gutter="20">
+                    <el-col :span="15">
+                        <el-select v-model="value" filterable placeholder="快速选择" style="margin-bottom: 20px;width:30%"
+                                   @change="selected">
+                            <el-option
+                                    v-for="option in options"
+                                    :key="option.key"
+                                    :value="option.value"
+                                    :label="option.key"
+                            ></el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :span="9" style="text-align: end">
+                          <el-button size="medium" @click="showMore">更多单病种</el-button>
 
-                <el-select v-model="value" filterable placeholder="请选择" style="margin-bottom: 20px" @change="selected(val)">
-                    <el-option
-                        v-for="option in options"
-                        :key="option.key"
-                        :value="option.value"
-                        :label="option.key"
-                    ></el-option>
-                </el-select>
-                {% set a = namespace(value=1) %}
-                {% set b = namespace(value=1) %}
+                    </el-col>
 
-                <el-tabs tab-position="left">
-                    {# 每个大病种类，这里的a，b用来定位图片地址 #}
+                </el-row>
+
+
+                <el-tabs tab-position="left" v-if="!more">
+                    {# 每个大病种类，非全部 #}
                     {% for class in structure %}
 
-                        <el-tab-pane label="{{ class }}">
+                        <el-tab-pane label="{{ class }}" v-if="majorInReport('{{ class }}')">
                             {# 每个小病种类 #}
 
                             {# 每行4个 #}
-                            {% for items in grouper(4, structure[class], {}) %}
+                            {% for items in grouper(4, structure[class], major_structure, {}) %}
                                 <el-row :gutter="20" style="margin-bottom: 30px">
                                     {% for DictItem in items %}
                                         <el-col :span="6" style="border-radius: 4px;">
-                                            <vs-card v-if="'{{ DictItem|length }}'!='0'">
+                                            <vs-card v-if="'{{ DictItem|length }}'!=0">
                                                 <template #title>
                                                     <h3>{{ DictItem|first }}</h3>
                                                 </template>
                                                 <template #img>
-                                                    <img src="/static/image/report/{{ a.value }}_{{ b.value }}.png"
+                                                    <img src="/static/image/report/{{ DictItem[DictItem|first] }}.png"
                                                          alt=""
                                                          style="width:100px; height:100px">
                                                 </template>
@@ -55,7 +63,8 @@
                                                 </template>
                                                 <template #interactions>
                                                     {% if sbm %}
-                                                        <vs-button class="btn-chat" href="/report/{{ DictItem[DictItem|first] }}?sbm={{ sbm }}">
+                                                        <vs-button class="btn-chat"
+                                                                   href="/report/{{ DictItem[DictItem|first] }}?sbm={{ sbm }}">
                                                             <template #animate>
                                                                 <i class='bx bx-upload'></i>
                                                             </template>
@@ -64,7 +73,8 @@
                                                         </vs-button>
                                                     {% else %}
                                                         {# 无sbm上报 #}
-                                                        <vs-button class="btn-chat" href="/report/{{ DictItem[DictItem|first] }}">
+                                                        <vs-button class="btn-chat"
+                                                                   href="/report/{{ DictItem[DictItem|first] }}">
                                                         <template #animate>
                                                             <i class='bx bx-upload'></i>
                                                         </template>
@@ -75,7 +85,6 @@
                                             </vs-card>
                                         </el-col>
 
-                                        {% set b.value = b.value + 1 %}
                                     {% endfor %}
                                 </el-row>
 
@@ -83,8 +92,63 @@
                             {% endfor %}
 
                         </el-tab-pane>
-                        {% set a.value = a.value + 1 %}
-                        {% set b.value = 1 %}
+                    {% endfor %}
+                </el-tabs>
+                <el-tabs tab-position="left" v-else>
+                    {# 每个大病种类，全部显示 #}
+                    {% for class in structure %}
+                        <el-tab-pane label="{{ class }}">
+                            {# 每个小病种类 #}
+
+                            {# 每行4个 #}
+                            {% for items in grouper_more(4, structure[class], {}) %}
+                                <el-row :gutter="20" style="margin-bottom: 30px">
+                                    {% for DictItem in items %}
+                                        <el-col :span="6" style="border-radius: 4px;">
+                                            <vs-card v-if="'{{ DictItem|length }}'!=0">
+                                                <template #title>
+                                                    <h3>{{ DictItem|first }}</h3>
+                                                </template>
+                                                <template #img>
+                                                    <img src="/static/image/report/{{ DictItem[DictItem|first] }}.png"
+                                                         alt=""
+                                                         style="width:100px; height:100px">
+                                                </template>
+                                                <template #text>
+                                                    <p>
+                                                    </p>
+                                                </template>
+                                                <template #interactions>
+                                                    {% if sbm %}
+                                                        <vs-button class="btn-chat"
+                                                                   href="/report/{{ DictItem[DictItem|first] }}?sbm={{ sbm }}">
+                                                            <template #animate>
+                                                                <i class='bx bx-upload'></i>
+                                                            </template>
+                                                            <span class="span">上 报</span>
+
+                                                        </vs-button>
+                                                    {% else %}
+                                                        {# 无sbm上报 #}
+                                                        <vs-button class="btn-chat"
+                                                                   href="/report/{{ DictItem[DictItem|first] }}">
+                                                        <template #animate>
+                                                            <i class='bx bx-upload'></i>
+                                                        </template>
+                                                        <span class="span">上 报</span>
+                                                    {% endif %}
+                                                    </vs-button>
+                                                </template>
+                                            </vs-card>
+                                        </el-col>
+
+                                    {% endfor %}
+                                </el-row>
+
+
+                            {% endfor %}
+
+                        </el-tab-pane>
                     {% endfor %}
                 </el-tabs>
             </el-main>
@@ -99,7 +163,9 @@
 {% block script %}
     <script>
         let row_options = {{ dictValues(structure)|tojson }};
-        const sbm = {{ sbm }};
+        let groupStructure = {{ structure|tojson }};
+        const sbm = '{{ sbm }}';
+        let reportStructure = {{ major_structure|tojson }};
     </script>
     <script src="/static/vendor/vuesax/dist/vuesax.min.js"></script>
     <script src="/static/js/report.js"></script>

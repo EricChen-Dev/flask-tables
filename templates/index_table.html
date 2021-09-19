@@ -6,10 +6,10 @@
 {# HTML body内容 #}
 {% block body %}
     <div id="table">
-{#        <el-skeleton :rows="30" animated :loading="loading">#}
-{#            <template slot="template">#}
-{#            </template>#}
-{#        </el-skeleton>#}
+        {#        <el-skeleton :rows="30" animated :loading="loading">#}
+        {#            <template slot="template">#}
+        {#            </template>#}
+        {#        </el-skeleton>#}
         <el-row>
 
 
@@ -45,14 +45,25 @@
             <el-table-column prop="XM" label="病人姓名">
 
             </el-table-column>
+            <el-table-column prop="MJZZD" label="主要诊断">
+
+            </el-table-column>
+            <el-table-column prop="ZZYS" label="主治医师">
+
+            </el-table-column>
             <el-table-column prop="RYSJ" label="入院日期">
 
             </el-table-column>
             <el-table-column prop="CYSJ" label="出院日期">
             </el-table-column>
 
-            <el-table-column prop="ZFY" label="总费用">
-
+            <el-table-column label="填报时间">
+            </el-table-column>
+            <el-table-column label="填报状态">
+            </el-table-column>
+            <el-table-column label="完成时间">
+            </el-table-column>
+            <el-table-column label="填报人员">
             </el-table-column>
 
             <el-table-column label="操作">

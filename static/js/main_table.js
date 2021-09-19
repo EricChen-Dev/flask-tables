@@ -117,7 +117,7 @@ var tablesVue = {
             load.close;
         },
         onQuerySuccess(data) {
-            this.searchResultData = Object.assign([], JSON.parse(data.data));
+            this.searchResultData = Object.assign([], data.data);
             this.searchResultCount = this.searchResultData.length;
             return this.searchResultData;
         },
@@ -135,7 +135,8 @@ var tablesVue = {
     mounted() {
         this.loading = true;
         // mounted最开始运行，将数据解析为json为js可用，并运行第一次currentPageChangeInner()
-        this.table_data = JSON.parse(metaTableListData);
+        console.log(metaTableListData)
+        this.table_data = metaTableListData;
         this.totalRecordsCount = this.table_data.length;
         this.currentPageChangeInner(this.table_data, this.currentPage); //获取第一页20行数据
     }

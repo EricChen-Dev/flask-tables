@@ -10,6 +10,7 @@ from flask_babelex import Babel
 from flask_login import current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import UserManager, UserMixin, login_required
+from db import get_db
 
 import Patient
 import errorHandler
@@ -21,9 +22,9 @@ from TableTypes import Table_Type
 
 class ConfigClass(object):
 	"""
-	flask application configuration class
-	flask全局配置类
-	"""
+    flask application configuration class
+    flask全局配置类
+    """
 	# flask settings
 	SECRET_KEY = 'DO NOT USE IN PRODUCTION'
 
@@ -49,15 +50,15 @@ def create_app():
 	app.config.from_object(__name__ + '.ConfigClass')  # 导入配置
 
 	# flask-babelex
-	babel = Babel(app)
+	# babel = Babel(app)
 
 	# Flask-SqlAlchemy
 	db = SQLAlchemy(app)
 
 	# add route /chart_demo here
-	app.register_blueprint(test.bp)
+	# app.register_blueprint(test.bp)
 
-	# add /report_disease route
+	# add /report route
 	app.register_blueprint(report.bp)
 
 	# add error page /404, /401
@@ -202,12 +203,12 @@ def create_app():
 	@login_required
 	def main_table():
 		# 这里请求得到数据库数据，这里以数据文件为例
-		# reader = csvReader("test_main_data.csv").read()
-		cursor_results = get_db().cursor().execute("select * from Patients limit 200").fetchall()
+		cursor_results = get_db().cursor().execute("select * from Patients where ZZYS = '{0}' limit "
+		                                           "200".format(current_user.xm)).fetchall()
+		# cursor_results = get_db().cursor().execute("select * from Patients limit 200").fetchall()
 		# 初始化病人model列表
-		patient_list = Patient.mapper(cursor_results, Table_Type.MAIN)
-
-		return render_template('index_table.html', tableData=patient_list)
+		# patient_list = Patient.mapper(cursor_results, Table_Type.MAIN)
+		return render_template('index_table.html', tableData=cursor_results)
 
 	@app.route('/main/edit', methods=["POST"])
 	@login_required
@@ -236,8 +237,7 @@ def create_app():
 	def get_patients():
 		query = request.args.get('query')
 		sql = "select * from Patients where XM='{0}' or SBM='{0}' or IDH='{0}'".format(str(query))
-		cursor_results = get_db().cursor().execute(sql)
-		patients_list = Patient.mapper(cursor_results, Table_Type.MAIN)
+		patients_list = get_db().cursor().execute(sql).fetchall()
 		# print(patients_list)
 		return {'data': patients_list}, 200
 
@@ -274,27 +274,28 @@ def create_app():
 		def existsInLists(target, lists):
 			return any(target in sublist for sublist in lists)
 
-		def grouper(n, iterable, fillValue=None):
-			args = [iter(iterable)] * n
+		def grouper(n, iterable_list, compared_list, fillValue=None):
+			reorganised = iterable_list.copy()
+			if compared_list:
+				for item in reorganised:
+					if not list(item.keys())[0] in compared_list:
+						reorganised.remove(item)
+			print("grouper: ")
+			print(reorganised)
+			args = [iter(reorganised)] * n
+			return zip_longest(fillvalue=fillValue, *args)
+
+		def grouper_more(n, iterable_list, fillValue=None):
+
+			args = [iter(iterable_list)] * n
+			print("grouper more: ")
+			print(iterable_list)
 			return zip_longest(fillvalue=fillValue, *args)
 
 		def dictValues(Dict):
 			return list(itertools.chain.from_iterable(Dict.values()))
 
-		return dict(existsInLists=existsInLists, grouper=grouper, dictValues=dictValues)
-
-	@login_required
-	def get_db():
-		_db = getattr(g, '_database', None)
-		if _db is None:
-			_db = g._database = sqlite3.connect("db/test.db")
-		return _db
-
-	@app.teardown_appcontext
-	def close_connection(exception):
-		_db = getattr(g, '_database', None)
-		if _db is not None:
-			_db.close()
+		return dict(existsInLists=existsInLists, grouper=grouper, grouper_more=grouper_more, dictValues=dictValues)
 
 	return app
 

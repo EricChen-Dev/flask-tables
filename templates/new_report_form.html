@@ -1,0 +1,173 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %} 剖 宫 产 {% endblock %}
+{% block other_head %}
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+{# HTML body内容 #}
+{% block body %}
+    <div id="new_pgc_form">
+        <el-container>
+            <el-header style="text-align: center; font-size: 12px; background-color: #545c64">
+            </el-header>
+        </el-container>
+
+        <el-container>
+            {# 左侧导航栏 #}
+            <el-aside width="60">
+                <vs-sidebar
+                        absolute
+                        hover-expand {# hover展开模式 #}
+                        reduce
+                        v-model="active"
+                        open {# 默认打开状态 #}
+                        dark {# 选中时为黑色 #}
+                >
+                    <template #logo>
+                        {# 这里放医院的logo #}
+                        <i class='bx bxs-cookie bx-lg' style="font-size: x-large;"></i>
+                    </template>
+                    {% for group_item in groups %}
+                        {% set hash_id = group_item.split(' ')[0] %}
+                        <vs-sidebar-item
+                                id="{{ group_item }}"
+                                @click.native="moveToAnchor('{{ hash_id }}')"
+                        >
+                            {# 侧边栏顶部LOGO #}
+                            <template #icon>
+                                <i class='bx bx-grid-alt'></i>
+
+                            </template>
+                            {{ group_item }}
+                        </vs-sidebar-item>
+                    {% endfor %}
+
+                </vs-sidebar>
+
+            </el-aside>
+
+            <el-main style="max-height:calc(100vh - 120px); scroll-behavior: smooth">
+                <h2 style="text-align: center">剖宫产</h2>
+                <el-form
+                        ref="form"
+                        :model="form"
+                        :rules="rules"
+                        label-width="390px"
+                        style=" max-width: 70%; min-width: 200px; margin-left: 5%">
+                    {% for key in zdm %}
+                        {# 表单副标题 #}
+                        <h3 id="{{ key }}"
+                            style="margin: 70px 0 30px; font-weight: 400; color: #1f2f3d">{{ groups[loop.index-1] }}</h3>
+                        {% for item in zdm[key] %}
+                            {# 此标题下需要的输入项 #}
+                            <el-form-item
+                                    label="{{ item[2] }}"
+                                    id="{{ item[1] }}"
+                                    prop="{{ item[1] }}"
+                                    {# v-if为此条出现条件 #}
+                                    v-if="'{{ item[8] }}'=='' || form['{{ item[8] }}']=='{{ item[9] }}'|| form['{{ item[8] }}'].includes('{{ item[9] }}')">
+                                {% if existsInLists(item[1], xz) and item[3] != '数组' %}
+                                    {# 如果xz有输入要求#}
+                                    {# 如果在xz中可以选择 #}
+                                    <el-select v-model="form['{{ item[1] }}']" placeholder="请选择"
+                                               :automatic-dropdown="false"
+                                               style="min-width: 200px; max-width: 90%; width: 800px">
+                                        <el-option
+                                                v-for="option in options['{{ item[1] }}']"
+                                                :key="option.value"
+                                                :label="option.label"
+                                                :value="option.value"
+                                        ></el-option>
+                                    </el-select>
+                                {% elif item[7] == 'int' %}
+                                    {# 如果是要求输入整数类型，用el-input-number，表示正整数 #}
+
+                                    {# 如果有最大数值要求 #}
+                                    {% if item[11] != '' %}
+                                        <el-input-number v-model="form['{{ item[1] }}']" :controls="false"
+                                                         :precision="0"
+                                                         :min="0" :max="{{ item[11] }}">
+
+                                    {% else %}
+                                        <el-input-number v-model="form['{{ item[1] }}']" :controls="false"
+                                                         :precision="0"
+                                                         :min="0">
+                                    {% endif %}
+
+                                </el-input-number>
+
+                                {% elif item[3] == '数组' %}
+                                    {# 多选项 #}
+                                    <el-checkbox-group v-model="form['{{ item[1] }}']">
+                                        <el-checkbox
+                                                v-for="option in options['{{ item[1] }}']"
+                                                :label="option.value"
+                                                :key="option.value"
+                                        >
+                                            {# 这里用vue的分隔符，注意修改最后的js #}
+                                            {* option.label *}
+                                        </el-checkbox>
+                                    </el-checkbox-group>
+
+                                {% elif item[3] == 'Date' %}
+                                    <el-date-picker
+                                            v-model="form['{{ item[1] }}']"
+                                            type="date"
+                                            format="yyyy-MM-dd"
+                                            value-format="yyyy-MM-dd"
+                                            placeholder="选择日期">
+                                    </el-date-picker>
+                                {% elif item[3] == 'DateTime' %}
+                                    <el-date-picker
+                                            v-model="form['{{ item[1] }}']"
+                                            type="datetime"
+                                            format="yyyy-MM-dd HH:mm"
+                                            value-format="yyyy-MM-dd HH:mm"
+                                            placeholder="选择日期时间">
+                                    </el-date-picker>
+
+                                {% else %}
+                                    {# 都不是则为普通字符串输入 #}
+                                    {% if item[11] != '' %}
+                                        <el-input v-model="form['{{ item[1] }}']" :max="{{ item[11] }}"
+                                                  style="min-width: 200px; max-width: 90%"></el-input>
+                                    {% else %}
+                                        <el-input v-model="form['{{ item[1] }}']"
+                                                  style="min-width: 200px; max-width: 90%"
+                                        ></el-input>
+                                    {% endif %}
+                                {% endif %}
+
+                            </el-form-item>
+                        {% endfor %}
+                    {% endfor %}
+
+                </el-form>
+            </el-main>
+
+        </el-container>
+        <el-footer style="text-align: center; font-size: 12px; background-color: rgba(84,92,100,0.8)">
+            <el-button type="primary" style="margin-top: 10px" @click="submit">提 交</el-button>
+        </el-footer>
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+    {#    sidebar 部件#}
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+
+    <script>
+        let zdm = {{zdm|tojson}}; //js得到服务器端数据
+        let xz = {{xz|tojson}}; //js得到服务器端数据
+        let groups =
+        {{ groups|tojson }} // 分组信息
+
+    </script>
+    <script src="/static/js/new_pgc_form.js"></script>
+
+{% endblock %}
