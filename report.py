@@ -8,7 +8,7 @@ from CsvReader import csvReader
 from db import get_db
 
 bp = Blueprint('report_disease', __name__, url_prefix='/report')
-report_structure = json.load(open('static/datafile/report_structure.json'))
+report_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
 
 
 @bp.route('/')
@@ -20,7 +20,7 @@ def report_event():
 	# 这里idh帮助定位
 	SBM = request.args.get('sbm')
 
-	major_report_structure = json.load(open('static/datafile/ks_dbz.json'))
+	major_report_structure = json.load(open('static/datafile/ks_dbz.json', encoding='utf-8'))
 	major_report_structure = major_report_structure[current_user.major] if len(major_report_structure[
 		                                                                           current_user.major]) > 0 else []
 	return render_template('report_page.html', sbm=SBM, structure=report_structure,
@@ -71,7 +71,9 @@ def reorganise(groups, zdm):
 		organised_zdm[str(group).split(' ')[0]] = []
 
 	for data in zdm:
-		key = data[1][0:4]  # 键值 如CS-1
+		key_id = [data[1].split("-")[0], data[1].split("-")[1]] if len(data[1].split("-")) > 2 else data[1]
+		key = "-".join(key_id)  # 键值 如CS-1
+		print(key)
 		if data[9]:
 			data[9] = str(data[9]).lower()  # 转小写
 		if organised_zdm.get(key) is not None:
@@ -81,4 +83,5 @@ def reorganise(groups, zdm):
 			# 其他情况，如果字段中有CM、caseId、SBM、IDCard归入基本信息
 			organised_zdm.get("基本信息").append(data)
 
+	print(organised_zdm)
 	return organised_zdm
