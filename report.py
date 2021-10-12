@@ -5,7 +5,8 @@ from flask_login import current_user
 from flask_user import roles_required
 
 from CsvReader import csvReader
-from db import get_db
+from db_connection import get_db
+from model import *
 
 bp = Blueprint('report_disease', __name__, url_prefix='/report')
 report_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
@@ -30,10 +31,14 @@ def report_event():
 @bp.route('/<operation_id>', methods=['GET', 'POST'])
 @roles_required(['Admin', 'IT', 'Other_Role'])
 def new_form(operation_id):
-	"""operation_id: 单病种代码"""
+	"""
+	获取病人信息并生成表格数据，传递至前端
+	operation_id: 单病种代码
+	"""
 	# 需要填报的sbm
 	reported_sbm = request.args.get('sbm')
 	print(reported_sbm, operation_id)
+
 	"""新建剖宫产表单"""
 	zdmData = csvReader('pgc_form/zdm.csv').read()[1::]  # 截取取第一行之后，这里的zdm可以是不根据字段名称排序过的
 	xzData = csvReader('pgc_form/xz.csv').read()[1::]  # 截取第一行之后
@@ -72,8 +77,7 @@ def reorganise(groups, zdm):
 
 	for data in zdm:
 		key_id = [data[1].split("-")[0], data[1].split("-")[1]] if len(data[1].split("-")) > 2 else data[1]
-		key = "-".join(key_id)  # 键值 如CS-1
-		print(key)
+		key = "-".join(key_id) if type(key_id) != str else key_id  # 键值 如CS-1
 		if data[9]:
 			data[9] = str(data[9]).lower()  # 转小写
 		if organised_zdm.get(key) is not None:
