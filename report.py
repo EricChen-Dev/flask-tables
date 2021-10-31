@@ -39,21 +39,16 @@ def new_form(operation_id):
 	reported_sbm = request.args.get('sbm')
 	print(reported_sbm, operation_id)
 
-	"""新建剖宫产表单"""
-	zdmData = csvReader('pgc_form/zdm.csv').read()[1::]  # 截取取第一行之后，这里的zdm可以是不根据字段名称排序过的
-	xzData = csvReader('pgc_form/xz.csv').read()[1::]  # 截取第一行之后
-	# 摘取到分组信息
-	groups = ['基本信息', 'CS-1 剖宫产术前评估', 'CS-2 手术指征', 'CS-3 手术前预防性抗菌药物选用一、二代头孢', 'CS-4 新生儿Apgar评分',
-	          'CS-5 输血量', 'CS-6 手术并发症与再次手术情况', 'CS-7 手术相关新生儿并发症', 'CS-8 提供母乳喂养教育情况',
-	          'CS-9 住院期间为产妇提供术前、术后健康教育与出院时提供教育告知五要素情况'
-	          'CS-10 手术切口愈合情况', 'CS-11 离院方式', 'CS-12 患者对服务的体验与评价', 'CS-13 住院费用']
-	# print(xzData)
-	# reorganise()会将zdm根据groups进行分组
-	reorganised_zdm = reorganise(groups, zdmData)
+	zdmData = get_db().cursor().execute('select zd.id as id, zd.name as name, "group", zd.group_name as group_name, '
+	                                  'zd.type as '
+	                          'type, zd.sql_type as sql_type, zd.nullable as nullable, zd.related_id as related_id, '
+	                          'zd.related_id_condition as related_id_condition, zd.min as min, zd.max as max from '
+	                          'dbz_zd zd left join dbz_and_dbz_zd dadz on zd.id = dadz.dbz_zd_id left join dbz on '
+	                          'dbz.id = dadz.dbz_id where dbz.id=?', (operation_id,)).fetchall()
+	# reorganised_zdm = reorganise(groups, zdmData)
 
 	if reported_sbm:
 		# 从数据库摘取这条信息
-
 		cursor_result = get_db().cursor().execute("select * from Patients where SBM='{0}'".format(
 			reported_sbm)).fetchone()
 		return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups,
