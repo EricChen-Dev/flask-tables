@@ -31,37 +31,37 @@ def init(db_conn, user_manager):
 		db_conn.session.add(user)
 		db_conn.session.commit()
 
-	data = csvReader('pgc_form/zdm.csv').read()[1::]
-	options = csvReader('pgc_form/xz.csv').read()[1::]
 
-	if not SingleDisease.query.filter(SingleDisease.id == 'CS').first():
-		db_conn.session.add(SingleDisease(id='CS', name='剖宫产'))
-		db_conn.session.commit()
-	for line in data:
-		if not DiseaseItem.query.filter(DiseaseItem.id == line[1]).first():
-			print('not exist')
-			db_conn.session.add(
-				DiseaseItem(dbz_id='CS',
-				            id=line[1],
-				            name=line[2],
-				            group=format_group_id(line),
-				            group_name=get_group_name(format_group_id(line)),
-				            type=line[3],
-				            sql_type=line[7],
-				            nullable=line[4],
-				            related_id=line[8],
-				            related_id_condition=line[9],
-				            min=line[10],
-				            max=line[11],
-				            )
-			)
-			db_conn.session.commit()
-
-	for line in options:
-		if not DiseaseItemOptions.query.filter(DiseaseItem.id == line[1], DiseaseItemOptions.value == line[2]).first():
-			db_conn.session.add(DiseaseItemOptions(disease_item_id=line[1], id=str(uuid.uuid4()), value=line[2],
-			                                       label=line[3]))
-			db_conn.session.commit()
+# data = csvReader('pgc_form/zdm.csv').read()[1::]
+# options = csvReader('pgc_form/xz.csv').read()[1::]
+#
+# if not SingleDisease.query.filter(SingleDisease.id == 'CS').first():
+# 	db_conn.session.add(SingleDisease(id='CS', name='剖宫产'))
+# 	db_conn.session.commit()
+# for line in data:
+# 	if not DiseaseItem.query.filter(DiseaseItem.id == line[1]).first():
+# 		db_conn.session.add(
+# 			DiseaseItem(
+# 				id=line[1],
+# 				name=line[2],
+# 				group=format_group_id(line),
+# 				group_name=get_group_name(format_group_id(line)),
+# 				type=line[3],
+# 				sql_type=line[7],
+# 				nullable=line[4],
+# 				related_id=line[8],
+# 				related_id_condition=line[9],
+# 				min=line[10],
+# 				max=line[11],
+# 			)
+# 		)
+# 		db_conn.session.commit()
+#
+# for line in options:
+# 	if not DiseaseItemOptions.query.filter(DiseaseItem.id == line[1], DiseaseItemOptions.value == line[2]).first():
+# 		db_conn.session.add(DiseaseItemOptions(disease_item_id=line[1], id=str(uuid.uuid4()), value=line[2],
+# 		                                       label=line[3]))
+# 		db_conn.session.commit()
 
 
 def format_group_id(data):

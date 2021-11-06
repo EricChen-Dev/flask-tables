@@ -42,7 +42,6 @@
 
                         <el-tab-pane label="{{ class }}" v-if="majorInReport('{{ class }}')">
                             {# 每个小病种类 #}
-
                             {# 每行4个 #}
                             {% for items in grouper(4, structure[class], major_structure, {}) %}
                                 <el-row :gutter="20" style="margin-bottom: 30px">
@@ -50,10 +49,10 @@
                                         <el-col :span="6" style="border-radius: 4px;">
                                             <vs-card v-if="'{{ DictItem|length }}'!=0">
                                                 <template #title>
-                                                    <h3>{{ DictItem|first }}</h3>
+                                                    <h3>{{ DictItem }}</h3>
                                                 </template>
                                                 <template #img>
-                                                    <img src="/static/image/report/{{ DictItem[DictItem|first] }}.png"
+                                                    <img src="/static/image/report/{{ structure[class][DictItem] }}.png"
                                                          alt=""
                                                          style="width:100px; height:100px">
                                                 </template>
@@ -64,7 +63,7 @@
                                                 <template #interactions>
                                                     {% if sbm %}
                                                         <vs-button class="btn-chat"
-                                                                   href="/report/{{ DictItem[DictItem|first] }}?sbm={{ sbm }}">
+                                                                   href="/report/{{ structure[class][DictItem] }}?sbm={{ sbm }}">
                                                             <template #animate>
                                                                 <i class='bx bx-upload'></i>
                                                             </template>
@@ -74,7 +73,7 @@
                                                     {% else %}
                                                         {# 无sbm上报 #}
                                                         <vs-button class="btn-chat"
-                                                                   href="/report/{{ DictItem[DictItem|first] }}">
+                                                                   href="/report/{{ structure[class][DictItem] }}">
                                                         <template #animate>
                                                             <i class='bx bx-upload'></i>
                                                         </template>
@@ -107,10 +106,10 @@
                                         <el-col :span="6" style="border-radius: 4px;">
                                             <vs-card v-if="'{{ DictItem|length }}'!=0">
                                                 <template #title>
-                                                    <h3>{{ DictItem|first }}</h3>
+                                                    <h3>{{ DictItem }}</h3>
                                                 </template>
                                                 <template #img>
-                                                    <img src="/static/image/report/{{ DictItem[DictItem|first] }}.png"
+                                                    <img src="/static/image/report/{{ structure[class][DictItem] }}.png"
                                                          alt=""
                                                          style="width:100px; height:100px">
                                                 </template>
@@ -121,7 +120,7 @@
                                                 <template #interactions>
                                                     {% if sbm %}
                                                         <vs-button class="btn-chat"
-                                                                   href="/report/{{ DictItem[DictItem|first] }}?sbm={{ sbm }}">
+                                                                   href="/report/{{ structure[class][DictItem] }}?sbm={{ sbm }}">
                                                             <template #animate>
                                                                 <i class='bx bx-upload'></i>
                                                             </template>
@@ -131,7 +130,7 @@
                                                     {% else %}
                                                         {# 无sbm上报 #}
                                                         <vs-button class="btn-chat"
-                                                                   href="/report/{{ DictItem[DictItem|first] }}">
+                                                                   href="/report/{{ structure[class][DictItem] }}">
                                                         <template #animate>
                                                             <i class='bx bx-upload'></i>
                                                         </template>
@@ -162,8 +161,8 @@
 
 {% block script %}
     <script>
-        let row_options = {{ dictValues(structure)|tojson }};
         let groupStructure = {{ structure|tojson }};
+
         const sbm = '{{ sbm }}';
         let reportStructure = {{ major_structure|tojson }};
     </script>

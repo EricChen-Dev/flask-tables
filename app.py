@@ -150,19 +150,17 @@ def create_app():
 		def grouper(n, iterable_list, compared_list, fillValue=None):
 			reorganised = iterable_list.copy()
 			if compared_list:
-				for item in reorganised:
-					if not list(item.keys())[0] in compared_list:
-						reorganised.remove(item)
-			print("grouper: ")
-			print(reorganised)
+				for item in iterable_list:
+					if item not in compared_list:
+						reorganised.pop(item)
 			args = [iter(reorganised)] * n
 			return zip_longest(fillvalue=fillValue, *args)
 
 		def grouper_more(n, iterable_list, fillValue=None):
-
-			args = [iter(iterable_list)] * n
-			print("grouper more: ")
-			print(iterable_list)
+			reorganised = iterable_list.copy()
+			args = [iter(reorganised)] * n
+			# print("grouper more: ")
+			# print(reorganised)
 			return zip_longest(fillvalue=fillValue, *args)
 
 		def dictValues(Dict):

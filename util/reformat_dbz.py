@@ -45,14 +45,19 @@ def reformat():
 				x_id = row[1]
 				option = row[2]
 				label = row[3]
+				dbz = dbz_id
 				try:
-					if not db.execute("select * from dbz_xz where dbz_id=? and label=? and option=?", (x_id, label,
-					                                                                                   option)).fetchall():
-						db.execute("insert into dbz_xz values (?,?,?)", (x_id, option, label))
+					if not db.execute("select * from dbz_xz where dbz_id=? and label=? and option=? and dbz=?", (x_id,
+					                                                                                             label,
+					                                                                                             option,
+					                                                                                             dbz
+					                                                                                             )).fetchall():
+						db.execute("insert into dbz_xz values (?,?,?,?)", (x_id, option, label, dbz))
 						db.commit()
 				except Exception:
 					db.rollback()
 
+		# 处理字段表格 - 非完美
 		with open(os.path.join('static/datafile/dbz_form/', zdm_filename), mode='r+', encoding='utf-8') as csvfile:
 			print("正在处理单病种 - {0}填报表单条件...".format(dbz_id))
 			reader = list(csv.reader(csvfile))[2::]

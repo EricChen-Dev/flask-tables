@@ -4,12 +4,10 @@ from flask import Blueprint, render_template, request
 from flask_login import current_user
 from flask_user import roles_required
 
-from CsvReader import csvReader
-from db_connection import get_db
+import db_connection
 from model import *
 
 bp = Blueprint('report_disease', __name__, url_prefix='/report')
-report_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
 
 
 @bp.route('/')
@@ -22,9 +20,15 @@ def report_event():
 	SBM = request.args.get('sbm')
 
 	major_report_structure = json.load(open('static/datafile/ks_dbz.json', encoding='utf-8'))
+	# 主要的本科室上报的病种
 	major_report_structure = major_report_structure[current_user.major] if len(major_report_structure[
 		                                                                           current_user.major]) > 0 else []
-	return render_template('report_page.html', sbm=SBM, structure=report_structure,
+
+	# 分组情况
+	group_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
+
+	print(group_structure)
+	return render_template('report_page.html', sbm=SBM, structure=group_structure,
 	                       major_structure=major_report_structure)
 
 
@@ -37,50 +41,39 @@ def new_form(operation_id):
 	"""
 	# 需要填报的sbm
 	reported_sbm = request.args.get('sbm')
-	print(reported_sbm, operation_id)
 
-	zdmData = get_db().cursor().execute('select zd.id as id, zd.name as name, "group", zd.group_name as group_name, '
-	                                  'zd.type as '
-	                          'type, zd.sql_type as sql_type, zd.nullable as nullable, zd.related_id as related_id, '
-	                          'zd.related_id_condition as related_id_condition, zd.min as min, zd.max as max from '
-	                          'dbz_zd zd left join dbz_and_dbz_zd dadz on zd.id = dadz.dbz_zd_id left join dbz on '
-	                          'dbz.id = dadz.dbz_id where dbz.id=?', (operation_id,)).fetchall()
-	# reorganised_zdm = reorganise(groups, zdmData)
+	# 单病种字段数据
+	zdmData = db_connection.generate_report_by_dbz(operation_id)
+	dbz_name = db_connection.get_dbz(operation_id)
+	reorganised_zdm, groups = reorganise(zdmData)
+	# 单病种字段选项
+	xzData = db_connection.generate_report_options_by_dbz(operation_id)
 
 	if reported_sbm:
 		# 从数据库摘取这条信息
-		cursor_result = get_db().cursor().execute("select * from Patients where SBM='{0}'".format(
-			reported_sbm)).fetchone()
+		patientData = db_connection.get_patient_case(reported_sbm)
 		return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups,
-		                       patient=cursor_result, major=current_user.major)
+		                       patient=patientData, major=current_user.major, user=current_user, dbz_name=dbz_name)
 	else:
 		return 404
 
 
-def reorganise(groups, zdm):
+def reorganise(zdmData):
 	"""根据分组重新整理分类表单项
 	返回Dict
-	key:[value]
+	key:
+		{"name": "分组名group_name",
+		"data": []
+		}
+
 	如：
-	CS-1: ['26', 'CS-1-1-1', '产次', '字符串', '是', 'null', 'not null', 'varchar(max)', ...]
+	"data": ['26', 'CS-1-1-1', '产次', '字符串', '是', 'null', 'not null', 'varchar(max)', ...]
 	"""
 	organised_zdm = dict()
-	optioned = dict()
-	for group in groups:
-		# 为每个信息新建空组，键值为前缀，如 CS-1
-		organised_zdm[str(group).split(' ')[0]] = []
+	for data in zdmData:
+		key = data['group']
+		if not organised_zdm.get(key):
+			organised_zdm[key] = {"name": data['group_name'], "data": []}
+		organised_zdm[key]['data'].append(data)
 
-	for data in zdm:
-		key_id = [data[1].split("-")[0], data[1].split("-")[1]] if len(data[1].split("-")) > 2 else data[1]
-		key = "-".join(key_id) if type(key_id) != str else key_id  # 键值 如CS-1
-		if data[9]:
-			data[9] = str(data[9]).lower()  # 转小写
-		if organised_zdm.get(key) is not None:
-			# 如果存在这个分类就归入这个分类下
-			organised_zdm.get(key).append(data)
-		else:
-			# 其他情况，如果字段中有CM、caseId、SBM、IDCard归入基本信息
-			organised_zdm.get("基本信息").append(data)
-
-	print(organised_zdm)
-	return organised_zdm
+	return organised_zdm, list(organised_zdm.keys())

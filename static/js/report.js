@@ -22,23 +22,26 @@ var formVue = {
             //检查此小项是否存在
             return this.major_structure.includes(item);
         },
-        majorInReport(major){
+        majorInReport(major) {
             //检查此大项病种是否需要显示
-            return this.group_structure[major].filter(item => this.major_structure.includes(Object.keys(item)[0])).length > 0;
+            // console.log(this.major_structure)
+            // console.log(this.group_structure)
+            return Object.keys(this.group_structure[major]).filter(item => this.major_structure.includes(item)).length > 0
+
         },
-        showMore(){
+        showMore() {
             this.more = true;
             this.$forceUpdate();
         }
     },
     mounted() {
         this.options = []
-        for (const option_pair of Object.values(row_options)) {
-            // console.log("value: "+value);
-            this.options.push({key: Object.keys(option_pair)[0], value: Object.values(option_pair)[0]});
+        for (let pair of Object.values(groupStructure)) {
+            for (let children in pair) {
+                this.options.push({key: children, value: pair[children]})
+            }
         }
         this.tempOptions = Object.assign({}, this.options);
-        console.log(this.options)
     },
     created() {
         this.major_structure = Object.assign([], reportStructure);

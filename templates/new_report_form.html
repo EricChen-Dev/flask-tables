@@ -1,7 +1,7 @@
 {#引入母版#}
 {% extends "table_base.html" %}
 {#设置title#}
-{% block title %} 剖 宫 产 {% endblock %}
+{% block title %}{{ patient['XM'] }} - {{ dbz_name['name'] }} {% endblock %}
 {% block other_head %}
     <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
     <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
