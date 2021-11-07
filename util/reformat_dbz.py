@@ -64,17 +64,19 @@ def reformat():
 			for row in reader:
 				condition = []
 				note = re.findall(re.compile(r'[(](.*?)[)]', re.S), row[6])
+				group = find_group(row[1], dbz_id)
 
 				if len(note) == 2:
-					if not db.execute("select * from dbz_zd where id=?", (row[1],)).fetchall():
+					if not db.execute("select * from dbz_zd where id=? and dbz_id=? ", (row[1], dbz_id)).fetchall():
 						try:
 							group = find_group(row[1], dbz_id)
 							try:
 								group_name = groups[group]
 							except KeyError:
 								group_name = groups["CM-0"]
-							db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
-								row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None, None
+							db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+								row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None, None,
+								dbz_id
 							))
 							db.commit()
 
@@ -82,7 +84,7 @@ def reformat():
 							db.rollback()
 
 				elif len(note) >= 1:
-					if not db.execute("select * from dbz_zd where id=?", (row[1],)).fetchall():
+					if not db.execute("select * from dbz_zd where id=?  and dbz_id=?", (row[1], dbz_id)).fetchall():
 						try:
 							group = find_group(row[1], dbz_id)
 							group_name = groups[group]
@@ -95,8 +97,19 @@ def reformat():
 								for index in delete_index:
 									note.remove(index)
 								print(note)
-								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
-									row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None, None
+								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+									row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None,
+									None, dbz_id
+								))
+								db.commit()
+							elif 'removeindex' in inputs:
+								delete_index = inputs.split('//')[1::]
+								for index in delete_index:
+									note.pop(int(index))
+								print(note)
+								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+									row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None,
+									None, dbz_id
 								))
 								db.commit()
 
@@ -105,8 +118,9 @@ def reformat():
 								for val in values:
 									note.append(val)
 								print(note)
-								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
-									row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None, None
+								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+									row[1], row[2], group, group_name, row[3], '', row[4], note[0], note[1], None,
+									None, dbz_id
 								))
 								db.commit()
 
@@ -115,15 +129,17 @@ def reformat():
 								for val in values:
 									note.append(val)
 								print(note)
-								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
-									row[1], row[2], group, group_name, row[3], '', row[4], None, None, note[1], note[2],
+								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+									row[1], row[2], group, group_name, row[3], '', row[4], None, None, note[1],
+									note[2], dbz_id
 								))
 								db.commit()
 
 
 							else:
-								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
+								db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
 									row[1], row[2], group, group_name, row[3], '', row[4], None, None, None, None,
+									dbz_id
 								))
 								db.commit()
 
@@ -141,9 +157,9 @@ def reformat():
 							group_name = groups[group]
 						except KeyError:
 							group_name = groups["CM-0"]
-						if not db.execute("select * from dbz_zd where id=?", (row[1],)).fetchall():
-							db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?)", (
-								row[1], row[2], group, group_name, row[3], '', row[4], None, None, None, None,
+						if not db.execute("select * from dbz_zd where id=? and dbz_id=?", (row[1], dbz_id)).fetchall():
+							db.execute("insert into dbz_zd values (?,?,?,?,?,?,?,?,?,?,?,?)", (
+								row[1], row[2], group, group_name, row[3], '', row[4], None, None, None, None, dbz_id
 							))
 							db.commit()
 					except IntegrityError:

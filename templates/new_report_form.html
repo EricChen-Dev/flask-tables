@@ -30,17 +30,16 @@
                         <i class='bx bxs-cookie bx-lg' style="font-size: x-large;"></i>
                     </template>
                     {% for group_item in groups %}
-                        {% set hash_id = group_item.split(' ')[0] %}
                         <vs-sidebar-item
                                 id="{{ group_item }}"
-                                @click.native="moveToAnchor('{{ hash_id }}')"
+                                @click.native="moveToAnchor('{{ group_item }}')"
                         >
                             {# 侧边栏顶部LOGO #}
                             <template #icon>
                                 <i class='bx bx-grid-alt'></i>
 
                             </template>
-                            {{ group_item }}
+                            {{ groups[group_item] }}
                         </vs-sidebar-item>
                     {% endfor %}
 
@@ -49,7 +48,7 @@
             </el-aside>
 
             <el-main style="max-height:calc(100vh - 120px); scroll-behavior: smooth">
-                <h2 style="text-align: center">剖宫产</h2>
+                <h2 style="text-align: center">{{ dbz_name['name'] }}</h2>
                 <el-form
                         ref="form"
                         :model="form"
@@ -59,58 +58,62 @@
                     {% for key in zdm %}
                         {# 表单副标题 #}
                         <h3 id="{{ key }}"
-                            style="margin: 70px 0 30px; font-weight: 400; color: #1f2f3d">{{ groups[loop.index-1] }}</h3>
-                        {% for item in zdm[key] %}
+                            style="margin: 70px 0 30px; font-weight: 400; color: #1f2f3d">
+                            {{ zdm[key].name }}
+                        </h3>
+                        {% for item in zdm[key].data %}
+                            {#                            {{ item }}#}
                             {# 此标题下需要的输入项 #}
                             <el-popover
                                     placement="right"
                                     title="可能关联项"
                                     width="300"
                                     trigger="hover"
-                                    :content="form['{{ item[1] }}']"
+                                    :content="'{{ item['name'] }}'"
                             >
                                 <el-form-item
                                         slot="reference"
-                                        label="{{ item[2] }}"
-                                        id="{{ item[1] }}"
-                                        prop="{{ item[1] }}"
+                                        label="{{ item['name'] }}"
+                                        id="{{ item['id'] }}"
+                                        prop="{{ item['id'] }}"
                                         {# v-if为此条出现条件 #}
-                                        v-if="'{{ item[8] }}'=='' || form['{{ item[8] }}']=='{{ item[9] }}'|| form['{{ item[8] }}'].includes('{{ item[9] }}')">
-                                    {% if existsInLists(item[1], xz) and item[3] != '数组' %}
+                                        v-if="matchShowCondition('{{ key }}','{{ item['id'] }}')"
+                                >
+                                    {% if existsInXzLists(item['id'], xz) and item['type'] != '数组' %}
                                         {# 如果xz有输入要求#}
                                         {# 如果在xz中可以选择 #}
-                                        <el-select v-model="form['{{ item[1] }}']" placeholder="请选择"
+                                        <el-select v-model="form['{{ item['id'] }}']" placeholder="请选择"
                                                    :automatic-dropdown="false"
                                                    style="min-width: 200px; max-width: 90%; width: 800px">
                                             <el-option
-                                                    v-for="option in options['{{ item[1] }}']"
+                                                    v-for="option in options['{{ item['id'] }}']"
                                                     :key="option.value"
                                                     :label="option.label"
                                                     :value="option.value"
                                             ></el-option>
                                         </el-select>
-                                    {% elif item[7] == 'int' %}
+                                    {% elif item['type'] == '数值' %}
                                         {# 如果是要求输入整数类型，用el-input-number，表示正整数 #}
 
                                         {# 如果有最大数值要求 #}
-                                        {% if item[11] != '' %}
-                                            <el-input-number v-model="form['{{ item[1] }}']" :controls="false"
+                                        {% if item['max'] != '' and item['max'] != None %}
+                                            <el-input-number v-model="form['{{ item['id'] }}']" :controls="false"
                                                              :precision="0"
-                                                             :min="0" :max="{{ item[11] }}">
+                                                             :min="{{ item['min'] }}" :max="{{ item['max'] }}">
 
                                         {% else %}
-                                            <el-input-number v-model="form['{{ item[1] }}']" :controls="false"
+                                            <el-input-number v-model="form['{{ item[id] }}']" :controls="false"
                                                              :precision="0"
                                                              :min="0">
                                         {% endif %}
 
                                     </el-input-number>
 
-                                    {% elif item[3] == '数组' %}
+                                    {% elif item['type'] == '数组' %}
                                         {# 多选项 #}
-                                        <el-checkbox-group v-model="form['{{ item[1] }}']">
+                                        <el-checkbox-group v-model="form['{{ item['id'] }}']">
                                             <el-checkbox
-                                                    v-for="option in options['{{ item[1] }}']"
+                                                    v-for="option in options['{{ item['id'] }}']"
                                                     :label="option.value"
                                                     :key="option.value"
                                             >
@@ -119,15 +122,7 @@
                                             </el-checkbox>
                                         </el-checkbox-group>
 
-                                    {% elif item[3] == 'Date' %}
-                                        <el-date-picker
-                                                v-model="form['{{ item[1] }}']"
-                                                type="date"
-                                                format="yyyy-MM-dd"
-                                                value-format="yyyy-MM-dd"
-                                                placeholder="选择日期">
-                                        </el-date-picker>
-                                    {% elif item[3] == 'DateTime' %}
+                                    {% elif item['sql_type'] == 'datetime' %}
                                         <el-date-picker
                                                 v-model="form['{{ item[1] }}']"
                                                 type="datetime"
@@ -138,11 +133,11 @@
 
                                     {% else %}
                                         {# 都不是则为普通字符串输入 #}
-                                        {% if item[11] != '' %}
-                                            <el-input v-model="form['{{ item[1] }}']" :max="{{ item[11] }}"
+                                        {% if item['max'] != '' and item['max'] != None %}
+                                            <el-input v-model="form['{{ item['id'] }}']" :max="{{ item['max'] }}"
                                                       style="min-width: 200px; max-width: 90%"></el-input>
                                         {% else %}
-                                            <el-input v-model="form['{{ item[1] }}']"
+                                            <el-input v-model="form['{{ item['id'] }}']"
                                                       style="min-width: 200px; max-width: 90%"
                                             ></el-input>
                                         {% endif %}
@@ -160,6 +155,7 @@
         </el-container>
         <el-footer style="text-align: center; font-size: 12px; background-color: rgba(84,92,100,0.8)">
             <el-button type="primary" style="margin-top: 10px" @click="submit">提 交</el-button>
+            <el-button style="margin-top: 10px; margin-left:20px" @click="saveAsDraft">存为草稿</el-button>
         </el-footer>
     </div>
 
@@ -170,16 +166,22 @@
 {% block script %}
     {#    sidebar 部件#}
     <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
-
+    <script src="/static/vendor/axios/dist/axios.min.js"></script>
     <script>
         let zdm = {{zdm|tojson}}; //js得到服务器端数据
         let xz = {{xz|tojson}}; //js得到服务器端数据
+
         let groups =
             {{ groups|tojson }}; // 分组信息
         let patient =
             {{ patient|tojson }}; //病人信息
 
         let major = "{{ major }}"; //上传科室
+
+        let dbz = {{ dbz_name|tojson }}; //病种名和id
+        let txys = '{{ user_name }}'; //填写医生
+        let zzys =
+        {{ zzys|tojson }}
 
     </script>
     <script src="/static/js/new_pgc_form.js"></script>

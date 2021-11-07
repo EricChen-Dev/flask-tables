@@ -28,7 +28,13 @@ def create_connection(db_file):
 	try:
 		conn = sqlite3.connect(db_file)
 		print("connected to db")
+		for item in conn.execute('select * from dbz_zd where "name" like "%时间%"').fetchall():
+			print(item)
+			conn.execute('update dbz_zd set sql_type = ? where id = ?', ('datetime', item[0]))
+
+			conn.commit()
 		return conn
+
 	except Error as e:
 		print(e)
 

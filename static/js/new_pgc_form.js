@@ -7,6 +7,7 @@ var formVue = {
             rules: {}, //表单验证规则
             active: "",
             focused: "",
+            zdmJson: {}
         };
     },
     methods: {
@@ -21,14 +22,60 @@ var formVue = {
             window.location.hash = key;
         },
         getData(id) {
-            return this.form[id];
+            if (id === 'None')
+                return ''
+            else
+                return this.form[id];
+        },
+        getZdmData(main, id) {
+            // console.log(this.zdmJson[main])
+            return this.zdmJson[main].data.find(item => item.id === id)
+        },
+        matchShowCondition(main, zdm_id) {
+            let zdm = this.getZdmData(main, zdm_id)
+            console.log(zdm)
+
+            if (zdm.related_id === null || zdm.related_id === '') {
+                return true
+            } else if (zdm.related_id_condition === this.form[zdm.related_id]) {
+                return true
+            } else if (zdm.related_id_condition.includes("/")) {
+                let conditions = zdm.related_id_condition.split("/")
+                return !!conditions.includes(this.form[zdm.related_id]);
+            }
+            console.log('false')
+            return false
+        },
+        replaceZfz(zfz) {
+            return zfz.substr(0, 4) + '**********' + zfz.substr(14, 4)
         },
         submit() {
-            //    提交表单
+            // 提交表单
             // 表单验证
             this.$refs["form"].validate((valid, invalidObj) => {
+                let postData = {
+                    sbm: patient.SBM,
+                    dbz: dbz.id,
+                    dbz_name: dbz.name,
+                    cykb: patient.CYKB,
+                    zzys: patient.ZZYS,
+                    zzysks: zzys.major,
+                    txys: txys,
+                    finishedDate: new Date(),
+                    status: '已完成',
+                    data: Object.assign({}, this.form)
+                }
                 if (valid) {
-                    alert('submit!');
+                    axios.post(window.location.pathname + window.location.search, postData)
+                        .then(response => {
+                            console.log(response)
+                            if (response.data.outcome) {
+                                window.location.href = response.data.next;
+                            } else {
+                                this.$message.error('未知错误');
+                            }
+                            this.loading = false;
+                        })
                 } else {
                     scrollToID(Object.keys(invalidObj)[0])
                     console.log(Object.keys(invalidObj)[0])
@@ -36,28 +83,52 @@ var formVue = {
                 }
             });
         },
+        saveAsDraft() {
+            //    保存为草稿不作验证
+            let postData = {
+                sbm: patient.SBM,
+                dbz: dbz.id,
+                dbz_name: dbz.name,
+                cykb: patient.CYKB,
+                zzys: patient.ZZYS,
+                zzysks: zzys.major,
+                txys: txys,
+                finishedDate: '',
+                status: '草稿',
+                data: Object.assign({}, this.form)
+            }
+
+            axios.post(window.location.pathname + window.location.search, postData)
+                .then(response => {
+                    console.log(response)
+                    if (response.data.outcome) {
+                        window.location.href = response.data.next;
+                    } else {
+                        this.$message.error('未知错误');
+                    }
+                    this.loading = false;
+                })
+        }
     },
     beforeMount() {
         // 初始化表单规则，别删那个temp
         var temp = {};
         for (let key in zdm) {
-            for (let item of zdm[key]) {
+            for (let item of zdm[key]['data']) {
                 // 这里可以预填表格
-                if (item[3] === '字符串') {
-                    temp[item[1]] = '';
-                } else if (item[3] === '数组') {
-                    temp[item[1]] = [];
+                if (item['type'] === '字符串') {
+                    temp[item['id']] = '';
+                } else if (item['type'] === '数组') {
+                    temp[item['id']] = [];
+                } else {
+                    temp[item['id']] = undefined;
                 }
-                else{
-                    temp[item[1]] = undefined;
-                }
-                // temp[item[1]] = undefined;
                 // 根据第五列是否为必填
-                if (item[4] === "是") {
+                if (item['nullable'] !== "是") {
                     // 如果是'是'，则在rules新建规则字典，key为id，如CS-1-1-1
-                    this.rules[item[1]] = [{
+                    this.rules[item['id']] = [{
                         required: true,
-                        message: item[2] + "是必填项", trigger: 'change'
+                        message: item['name'] + "是必填项", trigger: 'change'
                     }];
                 }
             }
@@ -65,14 +136,15 @@ var formVue = {
         }
         this.form = Object.assign({}, temp);
         // 初始化选择选项
+        this.options = {};
         for (let item of xz) {
             //遍历xz，将选项加入到对应options的键值对中
-            if (this.options[item[1]]) {  // 如果已存在键值
-                this.options[item[1]].push({value: item[2], label: item[3]});
+            if (this.options[item['dbz_id']]) {  // 如果已存在键值
+                this.options[item['dbz_id']].push({value: item['option'], label: item['label']});
             } else {
                 // 未存在此键值，则新建键值和数组
-                this.options[item[1]] = [];
-                this.options[item[1]].push({value: item[2], label: item[3]});
+                this.options[item['dbz_id']] = [];
+                this.options[item['dbz_id']].push({value: item['option'], label: item['label']});
             }
         }
 
@@ -84,7 +156,7 @@ var formVue = {
         this.form["CM-0-1-1-4"] = patient["ZRHS"] //责任护士
         this.form["CM-0-1-1-5"] = major //上报科室
         this.form["caseId"] = patient["BAH"] //患者病案号
-        this.form["IDCard"] = patient["SFZH"] //患者身份证号
+        this.form["IDCard"] = this.replaceZfz(patient["SFZH"]) //患者身份证号
         this.form["CM-0-2-1-1"] = patient["CSNYR"] //出生年月日
         this.form["CM-0-2-1-6"] = patient["XSDCSTZ"] //新生儿出生体重（克）
         this.form["CM-0-2-4-1"] = patient["RYSJ"] //入院日期时间
@@ -92,7 +164,7 @@ var formVue = {
         // this.form["CM-0-3-1"] = patient["ZKYS"] //费用支付方式
         // this.form["CM-0-1-1-1"] = patient["ZKYS"] //质控医师
 
-
+        this.zdmJson = zdm;
 
     },
     mounted() {

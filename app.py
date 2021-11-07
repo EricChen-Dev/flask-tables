@@ -144,8 +144,8 @@ def create_app():
 
 	@app.context_processor
 	def my_utility_processor():
-		def existsInLists(target, lists):
-			return any(target in sublist for sublist in lists)
+		def existsInXzLists(target, lists):
+			return any(target == sublist['dbz_id'] for sublist in lists)
 
 		def grouper(n, iterable_list, compared_list, fillValue=None):
 			reorganised = iterable_list.copy()
@@ -159,14 +159,12 @@ def create_app():
 		def grouper_more(n, iterable_list, fillValue=None):
 			reorganised = iterable_list.copy()
 			args = [iter(reorganised)] * n
-			# print("grouper more: ")
-			# print(reorganised)
 			return zip_longest(fillvalue=fillValue, *args)
 
 		def dictValues(Dict):
 			return list(itertools.chain.from_iterable(Dict.values()))
 
-		return dict(existsInLists=existsInLists, grouper=grouper, grouper_more=grouper_more, dictValues=dictValues)
+		return dict(existsInXzLists=existsInXzLists, grouper=grouper, grouper_more=grouper_more, dictValues=dictValues)
 
 	return app
 
