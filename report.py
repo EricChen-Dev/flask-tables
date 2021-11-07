@@ -75,12 +75,29 @@ def new_form(operation_id):
 		return {'outcome': True, 'next': '/main'}, 200
 
 
-@bp.route('/draft', methods=['POST'])
+@bp.route('/draft', methods=['GET', 'POST'])
 @roles_required(['Admin', 'IT', 'Other_Role'])
 def save_as_draft():
-	request_data = json.loads(request.data)
-	# 	传入数据和new_form post一样，但finished date为空，状态为草稿
-	return {'outcome': True, 'next': '/main'}, 200
+	"""处理草稿箱"""
+	if request.method == 'POST':
+		request_data = json.loads(request.data)
+		# 	传入数据和new_form post一样，但finished date为空，状态为草稿
+		return {'outcome': True, 'next': '/main'}, 200
+	elif request.method == 'GET':
+		# TODO 提取所有草稿为Array并作为drafts变量传递
+		return render_template('drafts.html', drafts=[])
+
+
+@bp.route('/draft/get')
+@roles_required(['Admin', 'IT', 'Other_Role'])
+def get_draft():
+	"""查找草稿功能 - 根据参数提取草稿, 根据起始时间或关键词查找"""
+	start_date = request.args.get('start_date')
+	end_date = request.args.get('end_date')
+	query = request.args.get('query')
+
+	# 检索并返回数据
+	return {'data': [{}]}, 200
 
 
 def reorganise(zdmData):

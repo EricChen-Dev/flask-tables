@@ -1,0 +1,163 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %}单病种上报 - 草稿箱{% endblock %}
+{% block other_head %}
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+{# HTML body内容 #}
+
+{% block body %}
+    <div id="table">
+        <el-header style="background-color: #545c64">
+            <el-row :gutter="20" justify="center" style="padding-top: 10px">
+                <el-col :span="8">
+                    <el-autocomplete v-model="search"
+                                     size="small"
+                                     placeholder="输入病人姓名、病人ID、识别码搜索"
+                                     :fetch-suggestions="querySearchAsync"
+                                     @select="selectDraft"
+                                     value-key="XM"
+                                     clearable
+                                     :trigger-on-focus="false"
+                    >
+                        <template slot="prepend">快速搜索</template>
+                    </el-autocomplete>
+                </el-col>
+                <el-col :span="10">
+                    <el-date-picker v-model="searchDateRange"
+                                    type="daterange"
+                                    size="small"
+                                    placeholder="根据时间范围搜索"
+                                    value-format="yyyy-MM-dd"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                    >
+
+                    </el-date-picker>
+                    <el-button type="primary" size="small" icon="el-icon-search" style="margin-left: 10px">搜 索
+                    </el-button>
+                </el-col>
+
+            </el-row>
+        </el-header>
+        <el-table :data="table_data" style="width: 100%" ref="index_table" max-height="1000" :key="table_key">
+
+            <el-table-column type="index" label="序号" width="50">
+            </el-table-column>
+
+            </el-table-column>
+
+            <el-table-column prop="sbm" label="识别码">
+
+            </el-table-column>
+            <el-table-column prop="idh" label="病人ID">
+
+            </el-table-column>
+            <el-table-column prop="xm" label="病人姓名">
+
+            </el-table-column>
+            <el-table-column prop="dbz_name" label="病种名称">
+
+            </el-table-column>
+            <el-table-column prop="zzys" label="主治医师">
+
+            </el-table-column>
+            <el-table-column prop="zzysks" label="主治医生科室">
+
+            </el-table-column>
+            <el-table-column prop="rysj" label="入院日期">
+
+            </el-table-column>
+            <el-table-column prop="cysj" label="出院日期">
+            </el-table-column>
+
+            <el-table-column prop="status" label="填报状态">
+            </el-table-column>
+            <el-table-column prop="finishedDate" label="完成时间">
+            </el-table-column>
+            <el-table-column prop="txys" label="填报人员">
+            </el-table-column>
+
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button @click.native.prevent="editRow(scope.row)" {# 编辑按钮传入方法及参数 #} type="text" size="small">
+                        继续编辑
+                    </el-button>
+
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    {#    sidebar 部件#}
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+    <script src="/static/vendor/axios/dist/axios.min.js"></script>
+    <script>
+        var tablesVue = {
+            data() {
+                return {
+                    table_data: [], // 表格数据存放位置
+                    search: '', //正在搜索的字段
+                    searchDateRange: [],
+                    searchResultData: [],   //搜索结果
+
+                    table_key: '', //临时变量
+
+                    loading: true
+                };
+            },
+            methods: {
+                editRow(row) {
+
+                },
+                querySearchAsync(queryString, callback) {
+                    let load = this.loading_animation;
+                    console.log("query: " + queryString);
+                    if (queryString === '') {
+                        this.searchResultData = this.table_data;
+                        this.totalRecordsCount = this.table_data.length
+                        this.currentPageChangeInner(this.table_data, this.currentPage)
+                    } else {
+                        //发送查询请求
+                        axios.get('/report/draft/get?query=' + queryString).then(response => {
+                            callback(this.onQuerySuccess(response.data));
+                        });
+                    }
+                    load.close;
+                },
+                onQuerySuccess(data) {
+                    this.searchResultData = Object.assign([], data.data);
+                    return this.searchResultData;
+                },
+                selectDraft(draft) {
+                    {#    当选中搜索到的草稿 #}
+                },
+                loading_animation() {
+                    // loading动画instance
+                    return this.$loading({
+                        lock: true,
+                        text: 'Loading',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(255,255,255, 0.6)'
+                    });
+                },
+
+            },
+            mounted() {
+                this.loading = true;
+                this.table_data = {{drafts|tojson}};
+            }
+        };
+
+        var tables = Vue.extend(tablesVue);
+
+        //这里是vue加载点html的id位置
+        new tables().$mount('#table')
+
+    </script>
+{% endblock %}
