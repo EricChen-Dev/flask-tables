@@ -2,7 +2,6 @@ import itertools
 import json
 import random
 import sqlite3
-import uuid
 from flask import Flask, render_template, request
 from itertools import zip_longest
 
@@ -10,12 +9,14 @@ from flask_login import current_user
 from flask_user import login_required
 
 import Patient
+import admin
+import db_connection
 import errorHandler
 import report
 from CsvReader import csvReader
 from TableTypes import Table_Type
-from db_connection import get_db
 from db.init_user import init as init_user
+from db_connection import get_db
 from model import *
 
 
@@ -61,6 +62,7 @@ def create_app():
 
 	# add /report route
 	app.register_blueprint(report.bp)
+	app.register_blueprint(admin.bp)
 
 	# add error page /404, /401
 	app.register_error_handler(404, errorHandler.page_not_found)
@@ -79,9 +81,10 @@ def create_app():
 	def main_table():
 		# 这里请求得到数据库数据，这里以数据文件为例
 		cursor_results = get_db().cursor().execute("select * from Patients where ZZYS = '{0}' limit "
-		                                           "200".format(current_user.xm)).fetchall()
-		# 初始化病人model列表
-		return render_template('index_table.html', tableData=cursor_results)
+												   "200".format(current_user.xm)).fetchall()
+		major_cases = db_connection.get_cases_with_same_major(current_user.major)
+		print(len(major_cases))
+		return render_template('index_table.html', tableData=cursor_results, major_cases=major_cases)
 
 	@app.route('/main/edit', methods=["POST"])
 	@login_required
@@ -95,7 +98,7 @@ def create_app():
 
 		# 更改DB数据
 		update_sql = "update Patients " \
-		             "set RYSJ='{0}', CYSJ='{1}', ZFY={2} where SBM='{3}'" \
+					 "set RYSJ='{0}', CYSJ='{1}', ZFY={2} where SBM='{3}'" \
 			.format(request_data['RYSJ'], request_data['CYSJ'], request_data['ZFY'], request_data['SBM'])
 		try:
 			get_db().cursor().execute(update_sql)

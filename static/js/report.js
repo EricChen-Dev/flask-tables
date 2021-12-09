@@ -7,16 +7,28 @@ var formVue = {
             major_structure: [],
             group_structure: {},
             more: false, //是否显示全部单病种
+            show_confirm_dialog: false, //核对确认对话框
         }
     },
     methods: {
         selected(reportId) {
-            if (sbm) {
-                window.location.href = '/report/' + reportId + '?sbm=' + sbm;
+            if (sbm !== '') {
+                axios.get(`/main/get_patients?query=${sbm}`).then(response => {
+                    this.valid_success(response, reportId);
+                });
             } else {
-                window.location.href = '/report/' + reportId;
+                // 如果没有选择病例
+                window.location.href = `/main?operation_id=${reportId}`;
             }
 
+        },
+        valid_success(response, reportId) {
+            if (response.status >= 200) {
+                return window.location.href = '/report/' + reportId + '?sbm=' + sbm;
+            } else {
+                // 如果报错
+                window.location.href = `/main?operation_id=${reportId}`;
+            }
         },
         inReportStructure(item) {
             //检查此小项是否存在

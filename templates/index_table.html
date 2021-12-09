@@ -10,24 +10,37 @@
         {#            <template slot="template">#}
         {#            </template>#}
         {#        </el-skeleton>#}
-        <el-row>
+        <el-header style="background-color: #b2bac3">
+            <el-row :gutter="20" justify="center" style="padding-top: 10px">
+                <el-col :span="8">
+                    <el-autocomplete v-model="search"
+                                     size="small"
+                                     placeholder="输入病人姓名、病人ID、识别码搜索"
+                                     :fetch-suggestions="querySearchAsync"
+                                     @select="selectPatient"
+                                     value-key="XM"
+                                     clearable
+                                     :trigger-on-focus="false"
+                                     @change="changeTo"
+                    >
+                        <template slot="prepend">快速搜索</template>
+                    </el-autocomplete>
+                </el-col>
+                <el-col :span="8">
 
-
-            <el-autocomplete v-model="search"
-                             size="small"
-                             placeholder="输入病人姓名、病人ID、识别码搜索"
-                             :fetch-suggestions="querySearchAsync"
-                             @select="selectPatient"
-                             value-key="XM"
-                             clearable
-                             :trigger-on-focus="false"
-                             @change="changeTo"
-            >
-                <template slot="prepend">快速搜索</template>
-            </el-autocomplete>
-
-        </el-row>
-
+                </el-col>
+                <el-col :span="8" style="float: right">
+                    <el-switch
+                            style="display: block"
+                            v-model="show_major_cases"
+                            active-text="本科室未上报病例"
+                            inactive-text="只看我的"
+                            @change="changeMajorCases"
+                    >
+                    </el-switch>
+                </el-col>
+            </el-row>
+        </el-header>
 
         <el-table :data="tempList" style="width: 100%" ref="index_table" max-height="1000" :key="table_key">
 
@@ -111,11 +124,11 @@
                 </el-form-item>
                 <el-form-item label="入院日期" :label-width="formLabelWidth">
                     <el-date-picker v-model="editingForm.RYSJ" type="date" placeholder="选择入院日期"
-                                    format="yyyy-MM-dd" value-format="dd/MM/yyyy"></el-date-picker>
+                                    format="yyyy/MM/dd" value-format="yyyy/MM/dd"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="出院日期" :label-width="formLabelWidth">
                     <el-date-picker v-model="editingForm.CYSJ" type="date" placeholder="选择出院日期"
-                                    ormat="yyyy-MM-dd" value-format="dd/MM/yyyy"></el-date-picker>
+                                    ormat="yyyy/MM/dd" value-format="yyyy/MM/dd"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="总费用" :label-width="formLabelWidth">
                     <el-input-number v-model="editingForm.ZFY" :controls="false"></el-input-number>
@@ -137,8 +150,6 @@
     <script>
         let metaTableListData = {{tableData|tojson}}; //js得到服务器端数据
     </script>
-    <script src="/static/vendor/axios/dist/axios.min.js"></script>
     <script src="/static/js/main_table.js"></script>
-
 
 {% endblock %}

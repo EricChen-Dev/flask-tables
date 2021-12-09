@@ -2,6 +2,7 @@ var tablesVue = {
     data() {
         return {
             table_data: [], // 表格数据存放位置
+            major_case_data: [], //科室所有病例存放位置
             search: '', //正在搜索的字段
             searchResultData: [],   //搜索结果
 
@@ -19,7 +20,9 @@ var tablesVue = {
 
             table_key: '', //临时变量
 
-            loading: true
+            loading: true,
+
+            show_major_cases: false
         };
     },
     methods: {
@@ -28,7 +31,12 @@ var tablesVue = {
             this.dialogFormVisible = true;
         },
         goToReport(row) {
-            window.location.href = "/report?sbm=" + row.SBM;
+            const urlParams = new URLSearchParams(window.location.search);
+            const operation_id = urlParams.get('operation_id')
+            if (operation_id === undefined || operation_id === null)
+                window.location.href = "/report?sbm=" + row.SBM;
+            else 
+                window.location.href = `/report/${operation_id}?sbm=${row.SBM}`
         },
         handleSizeChange(newPageSize) {
             //每页条数切换
@@ -130,6 +138,13 @@ var tablesVue = {
                 background: 'rgba(255,255,255, 0.6)'
             });
         },
+        changeMajorCases(showMajor){
+          //    是否显示本科室病例
+            if(showMajor){
+
+            }
+
+        }
 
     },
     mounted() {

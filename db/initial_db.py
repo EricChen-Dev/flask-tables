@@ -13,7 +13,7 @@ def initial():
 	# readTableHeadCsv(connection)
 
 	# convert str to date for column RYSJ and CYSJ
-	# reformatDate(connection)
+	reformatDate(connection)
 
 
 
@@ -29,7 +29,6 @@ def create_connection(db_file):
 		conn = sqlite3.connect(db_file)
 		print("connected to db")
 		for item in conn.execute('select * from dbz_zd where "name" like "%时间%"').fetchall():
-			print(item)
 			conn.execute('update dbz_zd set sql_type = ? where id = ?', ('datetime', item[0]))
 
 			conn.commit()
@@ -66,10 +65,11 @@ def reformatDate(connection):
 	# 将原来的字符形式改为DateTime
 	results = connection.execute("select SBM, RYSJ, CYSJ from Patients")
 	for result in results:
-		incomingDate = convert_string_to_DateTime(result[1])
-		outDate = convert_string_to_DateTime(result[2])
-
-		sql = "update Patients set RYSJ = '{0}', CYSJ = '{1}' where SBM = '{2}'".format(incomingDate, outDate,
+		print(result[1])
+		print(result[2])
+		RYSJ_datetime = datetime.datetime.strptime(str(result[1]), '%d/%m/%Y %H:%M:%S').strftime('%Y/%m/%d %H:%M:%S')
+		CYSJ_datetime = datetime.datetime.strptime(str(result[2]), '%d/%m/%Y %H:%M:%S').strftime('%Y/%m/%d %H:%M:%S')
+		sql = "update Patients set RYSJ = '{0}', CYSJ = '{1}' where SBM = '{2}'".format(RYSJ_datetime, CYSJ_datetime,
 		                                                                                result[0])
 		print(sql)
 		connection.execute(sql)

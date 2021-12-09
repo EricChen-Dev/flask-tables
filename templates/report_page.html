@@ -130,7 +130,7 @@
                                                     {% else %}
                                                         {# 无sbm上报 #}
                                                         <vs-button class="btn-chat"
-                                                                   href="/report/{{ structure[class][DictItem] }}">
+                                                                   href="/main?operation_id={{ structure[class][DictItem] }}">
                                                         <template #animate>
                                                             <i class='bx bx-upload'></i>
                                                         </template>
@@ -163,7 +163,7 @@
     <script>
         let groupStructure = {{ structure|tojson }};
 
-        const sbm = '{{ sbm }}';
+        const sbm = '{{ sbm or '' }}';
         let reportStructure = {{ major_structure|tojson }};
     </script>
     <script src="/static/vendor/vuesax/dist/vuesax.min.js"></script>

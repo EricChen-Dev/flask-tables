@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 
 from flask_login import current_user
 from flask_user import roles_required
@@ -15,20 +15,20 @@ def report_event():
 	"""上报单病种页面
 		可选 sbm: string (SBM)
 	"""
-	# 这里idh帮助定位
+	# 这里sbm帮助定位
 	SBM = request.args.get('sbm')
 
 	major_report_structure = json.load(open('static/datafile/ks_dbz.json', encoding='utf-8'))
 	# 主要的本科室上报的病种
 	major_report_structure = major_report_structure[current_user.major] if len(major_report_structure[
-		                                                                           current_user.major]) > 0 else []
+																				   current_user.major]) > 0 else []
 
 	# 分组情况
 	group_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
 
 	print(group_structure)
 	return render_template('report_page.html', sbm=SBM, structure=group_structure,
-	                       major_structure=major_report_structure)
+						   major_structure=major_report_structure)
 
 
 @bp.route('/<operation_id>', methods=['GET', 'POST'])
@@ -53,10 +53,12 @@ def new_form(operation_id):
 			patientData = db_connection.get_patient_case(reported_sbm)
 			zzys = db_connection.get_user(patientData['ZZYS'])
 			return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups,
-			                       patient=patientData, major=current_user.major, user_name=current_user.xm,
-			                       dbz_name=dbz_name, zzys=zzys)
+								   patient=patientData, major=current_user.major, user_name=current_user.xm,
+								   dbz_name=dbz_name, zzys=zzys)
 		else:
-			return 404
+			# sbm为空，代表没有选择病例，跳转病例选择页面，并传递operation_id（单病种id）
+			return redirect(url_for('main_table', operation_id=operation_id))
+
 	elif request.method == 'POST':
 		# 已通过前端验证提交表单
 		request_data = json.loads(request.data)
