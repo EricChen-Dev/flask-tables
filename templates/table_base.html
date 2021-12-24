@@ -8,8 +8,9 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="shortcut icon" href="/static/image/favicon.ico">
 
-    <!--    引入element样式-->
+    <!--    引入element及样式-->
     <link rel="stylesheet" href="/static/vendor/element-ui/lib/theme-chalk/index.css">
+
     {#  preloader样式  #}
     <link href="/static/style/loader.css" rel="stylesheet">
     {% block other_head %}{% endblock %}
@@ -29,6 +30,7 @@
 <script src="/static/vendor/vue/vue.js"></script>
 <!--引入element js-->
 <script src="/static/vendor/element-ui/lib/index.js"></script>
+
 <script>
     (function (window, undefined) {
         // 监听页面加载完成后，检查是否需要定位锚点
@@ -36,6 +38,7 @@
             scrollToAnchor()
         };
     })(window);
+
     // 滚动到自定义的伪锚点
     function scrollToAnchor() {
         var hash = getHash(), // 获取url的hash值
@@ -53,7 +56,7 @@
         animationToAnchor(document.getElementsByTagName("main")[0].scrollTop, anchorScrollTop);
     }
 
-    function scrollToID(DOMId){
+    function scrollToID(DOMId) {
         let dom = document.getElementById(DOMId);
         let anchorScrollTop = dom.offsetTop - 200;
         animationToAnchor(document.getElementsByTagName("main")[0].scrollTop, anchorScrollTop);
@@ -105,7 +108,6 @@
     }
 </script>
 <script src="/static/vendor/axios/dist/axios.min.js"></script>
-
 
 {#其他script位置#}
 

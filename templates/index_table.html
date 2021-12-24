@@ -11,7 +11,7 @@
         {#            </template>#}
         {#        </el-skeleton>#}
         <el-header style="background-color: #b2bac3">
-            <el-row :gutter="20" justify="center" style="padding-top: 10px">
+            <el-row :gutter="20" justify="space-between" style="padding-top: 10px" align="middle" type="flex">
                 <el-col :span="8">
                     <el-autocomplete v-model="search"
                                      size="small"
@@ -26,10 +26,10 @@
                         <template slot="prepend">快速搜索</template>
                     </el-autocomplete>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="1">
 
                 </el-col>
-                <el-col :span="8" style="float: right">
+                <el-col :span="3">
                     <el-switch
                             style="display: block"
                             v-model="show_major_cases"
@@ -39,10 +39,13 @@
                     >
                     </el-switch>
                 </el-col>
+                <el-col :span="5">
+                    <el-link href="/logout"><i class='bx bx-log-out'></i>  注 销</el-link>
+                </el-col>
             </el-row>
         </el-header>
 
-        <el-table :data="tempList" style="width: 100%" ref="index_table" max-height="1000" :key="table_key">
+        <el-table :data="tempList" style="width: 100%" ref="index_table" max-height="1080"  :key="table_key">
 
             <el-table-column type="index" label="序号" width="50">
             </el-table-column>

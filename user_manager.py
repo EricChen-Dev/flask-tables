@@ -59,7 +59,7 @@ class CustomUserManager(UserManager):
 			if not User.query.filter(User.username == username).first():
 				# 如果这个用户名不存在，新建用户并保存至数据库
 				new_user = User(id=str(uuid.uuid4()), username=username,
-				                password=user_manager.hash_password(password),
+				                password=UserManager.hash_password(self, password),
 				                xm=xm, major=major)
 				new_user.roles.append(Role(name='Other_Role'))  # 这里赋予角色
 				# new_user.roles.append(Role(name='Other_Role2'))  # 这里赋予角色

@@ -31,12 +31,17 @@ var tablesVue = {
             this.dialogFormVisible = true;
         },
         goToReport(row) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const operation_id = urlParams.get('operation_id')
-            if (operation_id === undefined || operation_id === null)
-                window.location.href = "/report?sbm=" + row.SBM;
-            else 
-                window.location.href = `/report/${operation_id}?sbm=${row.SBM}`
+            // const urlParams = new URLSearchParams(window.location.search);
+            // const operation_id = urlParams.get('operation_id')
+            // if (operation_id === undefined || operation_id === null)
+            //     window.location.href = "/report?sbm=" + row.SBM;
+            // else
+            //     window.location.href = `/report/${operation_id}?sbm=${row.SBM}`
+
+
+            //从主页取得此条operation id字段数据
+            const operation_id = row.operation_id;
+            window.location.href = `/report/${operation_id}?sbm=${row.SBM}`
         },
         handleSizeChange(newPageSize) {
             //每页条数切换
@@ -144,7 +149,7 @@ var tablesVue = {
 
             }
 
-        }
+        },
 
     },
     mounted() {
