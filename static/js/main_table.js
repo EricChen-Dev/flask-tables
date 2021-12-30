@@ -150,6 +150,16 @@ var tablesVue = {
             }
 
         },
+        filterStatus(value, row){
+        // 填报状态列筛选方法
+            if(row.TBZT === value){
+                return true;
+            }
+            else return !!value.includes(row.TBZT);
+        },
+        statusTagType(status){
+            let outcome = status === '未填报' ? 'danger' : ((scope.row.TBZT === '草稿')?('warning'):('success'))
+        }
 
     },
     mounted() {
@@ -161,6 +171,9 @@ var tablesVue = {
         this.currentPageChangeInner(this.table_data, this.currentPage); //获取第一页20行数据
     }
 };
+
+
+Vue.options.delimiters = ['{*', '*}'];
 
 var tables = Vue.extend(tablesVue);
 
