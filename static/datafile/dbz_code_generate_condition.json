@@ -1,0 +1,1805 @@
+{
+	"aecopd": {
+		"name": "慢性阻塞性肺疾病急性发作（住院）",
+		"group": "呼吸系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"J44.0",
+				"J44.1"
+			],
+			"other_diagnosis": [],
+			"main_operation": [],
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"cac": {
+		"name": "哮喘（成人，急性发作，住院）",
+		"group": "呼吸系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"J45",
+				"J46"
+			],
+			"other_diagnosis": [],
+			"main_operation": [],
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"cacc": {
+		"name": "哮喘（儿童，住院）",
+		"group": "呼吸系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"J45",
+				"J46"
+			],
+			"other_diagnosis": [],
+			"main_operation": [],
+			"min_age": 2,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"cap": {
+		"name": "社区获得性肺炎（儿童，首次住院）",
+		"group": "呼吸系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"J13",
+				"J14",
+				"J15",
+				"J16",
+				"J18"
+			],
+			"other_diagnosis": [],
+			"main_operation": [],
+			"min_age": 2,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"J95.802",
+				"J18.800x011"
+			]
+		}
+	},
+	"cap-adult": {
+		"name": "社区获得性肺炎（成人，首次住院）",
+		"group": "呼吸系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"J13",
+				"J14",
+				"J15",
+				"J16",
+				"J18"
+			],
+			"other_diagnosis": [],
+			"main_operation": [],
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"J95.802",
+				"J18.800x011"
+			]
+		}
+	},
+	"oit": {
+		"name": "口腔种植术",
+		"group": "口腔系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [
+					"23.5",
+					"23.6"
+				],
+				"住院": [
+					"76.91",
+					"76.92",
+					"22.79"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"pt": {
+		"name": "腮腺肿瘤（手术治疗）",
+		"group": "口腔系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"D11.0",
+				"D33.2",
+				"D10.5",
+				"C07",
+				"C71.9",
+				"C10.2"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"26.2",
+					{
+						"26.3": "04.42"
+					}
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"tscc": {
+		"name": "舌鳞状细胞癌（手术治疗）",
+		"group": "口腔系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C01",
+				"C02"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"25.1",
+					"25.2",
+					"25.3",
+					"25.4",
+					"40.4"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"dkd": {
+		"name": "糖尿病肾病",
+		"group": "泌尿系统疾病/操作",
+		"if_conditions": {
+			"main_diagnosis": [
+				"E10",
+				"E11",
+				"E12",
+				"E13",
+				"E14"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					{
+						"55.23": "not pregnant"
+					}
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"C00-C97"
+			],
+			"operation": [
+				"39.95"
+			]
+		}
+	},
+	"dpd": {
+		"name": "终末期肾病腹膜透析",
+		"group": "泌尿系统疾病/操作",
+		"if_conditions": {
+			"main_diagnosis": [
+				"N18.0"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"54.98"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"C00-C97"
+			],
+			"operation": [
+				"39.95"
+			]
+		}
+	},
+	"hd": {
+		"name": "终末期肾病血液透析",
+		"group": "泌尿系统疾病/操作",
+		"if_conditions": {
+			"main_diagnosis": [
+				"N18.0"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"38.95",
+					"39.27",
+					"39.42",
+					"39.95"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"asah": {
+		"name": "急性动脉瘤性蛛网膜下腔出血（初发，手术治疗）",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I60.0",
+				"I60.1",
+				"I60.2",
+				"I60.3",
+				"I60.4",
+				"I60.5",
+				"I60.6",
+				"I60.7",
+				"I60.8",
+				"I60.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"01.3",
+					"02.2",
+					"02.3",
+					"38.3",
+					"38.4",
+					"38.6",
+					"39.5"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"cse": {
+		"name": "惊厥性癫痫持续状态",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"G41.0",
+				"G41.8",
+				"G41.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"gli": {
+		"name": "胶质瘤（初发，手术治疗）",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C71"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"01.52",
+					"01.53",
+					"01.54",
+					"01.55",
+					"01.56",
+					"01.57",
+					"01.58",
+					"01.59"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"ich": {
+		"name": "脑出血",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I61.0",
+				"I61.1",
+				"I61.2",
+				"I61.3",
+				"I61.4",
+				"I61.5",
+				"I61.6",
+				"I61.7",
+				"I61.8",
+				"I61.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"S06.80",
+				"I69.10",
+				"I63.903"
+			]
+		}
+	},
+	"men": {
+		"name": "脑膜瘤（初发手术治疗）",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C70.0",
+				"C70.9",
+				"D32.0",
+				"D32.9",
+				"D42.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"01.51",
+					"01.59"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"pa": {
+		"name": "垂体腺瘤（初发，手术治疗）",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"D35.2",
+				"C75.1",
+				"D44.3",
+				"E22.0",
+				"E23.6"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"07.61",
+					"07.62",
+					"07.63",
+					"07.64",
+					"07.65",
+					"07.66",
+					"07.67",
+					"07.68",
+					"07.69",
+					"07.71",
+					"07.72",
+					"07.79",
+					"01.59"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"pd": {
+		"name": "帕金森病",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"G20.x00"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true
+		}
+	},
+	"stk": {
+		"name": "脑梗死（首次住院）",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I63.0",
+				"I63.1",
+				"I63.2",
+				"I63.3",
+				"I63.4",
+				"I63.5",
+				"I63.6",
+				"I63.7",
+				"I63.8",
+				"I63.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"I69.3",
+				"I63.801",
+				"I63.904",
+				"I63.903"
+			]
+		}
+	},
+	"tia": {
+		"name": "短暂性脑缺血发作",
+		"group": "神经系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"G45.0",
+				"G45.1",
+				"G45.2",
+				"G45.3",
+				"G45.4",
+				"G45.5",
+				"G45.6",
+				"G45.7",
+				"G45.8",
+				"G45.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"G45.004"
+			]
+		}
+	},
+	"cs": {
+		"name": "剖宫产",
+		"group": "生殖系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"74.0",
+					"74.1",
+					"74.2",
+					"74.4",
+					"74.99"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"dg": {
+		"name": "异位妊娠（手术治疗）",
+		"group": "生殖系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"O00"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"66.01",
+					"66.02",
+					"66.62",
+					"66.95",
+					"74.30"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"um": {
+		"name": "子宫肌瘤（手术治疗）",
+		"group": "生殖系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"D25"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"68.29",
+					"68.3",
+					"68.4",
+					"68.5",
+					"68.9"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"af": {
+		"name": "房颤",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I48"
+			],
+			"other_diagnosis": [
+				"I48"
+			],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"asd": {
+		"name": "房间隔缺损手术",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"35.51",
+					"35.52",
+					"35.61",
+					"35.71"
+				]
+			},
+			"min_age": 2,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"avr": {
+		"name": "主动脉瓣置换术",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"35.0",
+					"35.2"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"cabg": {
+		"name": "冠状动脉旁路移植术",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"36.1"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"hf": {
+		"name": "心力衰竭",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I05",
+				"I06",
+				"I07",
+				"I08",
+				"I09",
+				"I11",
+				"I12",
+				"I13",
+				"I20",
+				"I21",
+				"I40",
+				"I41",
+				{
+					"I42": {
+						"CYZD_QTZD1": "I50"
+					}
+				},
+				{
+					"I43": {
+						"CYZD_QTZD1": "I50"
+					}
+				}
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"36.1"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"Z98.800x422",
+				"O75.4",
+				"O00",
+				"O01",
+				"O02",
+				"O03",
+				"O04",
+				"O05",
+				"O06",
+				"O07",
+				"O08.8",
+				"P29.0",
+				"I15"
+			],
+			"operation": [
+				{
+					"range": [
+						"37.61003",
+						"37.95001"
+					]
+				}
+			]
+		}
+	},
+	"mvr": {
+		"name": "二尖瓣置换术",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"35.02",
+					"35.12",
+					"35.23",
+					"35.24"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"stemi": {
+		"name": "急性心肌梗死（ST 段抬高型，首次住院）",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"I21.0",
+				"I21.1",
+				"I21.2",
+				"I21.3"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": [
+				"I21.401",
+				"I21.402",
+				"I21.403",
+				"I21.901"
+			]
+		}
+	},
+	"vsd": {
+		"name": "冠状动脉旁路移植术",
+		"group": "心血管系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"35.53",
+					"35.55",
+					"35.62",
+					"35.72"
+				]
+			},
+			"min_age": 2,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"pacg": {
+		"name": "原发性急性闭角型青光眼（手术治疗）",
+		"group": "眼科系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"H26.2",
+				"H40.0",
+				"H40.2",
+				"H40.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"10.1",
+					"10.49",
+					"10.6",
+					"10.91",
+					"10.99",
+					"12.11",
+					"12.12",
+					"12.64",
+					"12.66",
+					"12.67",
+					"12.71",
+					"12.72",
+					"12.73",
+					"12.79",
+					"12.83",
+					"12.85",
+					"12.87",
+					"12.91",
+					"12.92",
+					"12.99",
+					"13.19",
+					"13.3",
+					"13.41",
+					"13.59",
+					"13.70",
+					"13.71",
+					"13.90",
+					"14.73",
+					"14.74",
+					"14.79"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"rd": {
+		"name": "复杂性视网膜脱离（手术治疗）",
+		"group": "眼科系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"E10.3",
+				"E11.3",
+				"E14.3",
+				"H33.0",
+				"H33.1",
+				"H33.2",
+				"H33.3",
+				"H33.4",
+				"H33.5",
+				"H59.8"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"13.19",
+					"13.3",
+					"13.41",
+					"13.42",
+					"13.43",
+					"13.59",
+					"13.64",
+					"13.65",
+					"13.69",
+					"13.70",
+					"13.71",
+					"13.72",
+					"13.8",
+					"13.90",
+					"14.29",
+					"14.31",
+					"14.49",
+					"14.51",
+					"14.52",
+					"14.53",
+					"14.54",
+					"14.59",
+					"14.71",
+					"14.72",
+					"14.73",
+					"14.75",
+					"14.9"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"ddh": {
+		"name": "发育性髋关节发育不良",
+		"group": "运动系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"Q65.0",
+				"Q65.1",
+				"Q65.2",
+				"Q65.3",
+				"Q65.4",
+				"Q65.5",
+				"Q65.6",
+				"Q65.8",
+				"Q65.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"79.85",
+					"77.25",
+					"77.29"
+				]
+			},
+			"min_age": 1.5,
+			"max_age": 8
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"hip": {
+		"name": "髋关节置换术",
+		"group": "运动系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"00.7",
+					"81.51",
+					"81.52",
+					"81.53"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"knee": {
+		"name": "膝关节置换术",
+		"group": "运动系统疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"00.80",
+					"00.81",
+					"00.82",
+					"00.83",
+					"00.84",
+					"81.54",
+					"81.55"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"bc": {
+		"name": "乳腺癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C50"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"85.2",
+					"85.4"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"cc": {
+		"name": "宫颈癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C53"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"67.2",
+					"67.3",
+					"67.4",
+					"68.4",
+					"68.5",
+					"68.6",
+					"68.7"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"coc": {
+		"name": "结肠癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C18",
+				"D01.0"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"45.4",
+					"45.73",
+					"45.74",
+					"45.75",
+					"45.76",
+					"45.77",
+					"45.78",
+					"45.79",
+					"45.8"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"gc": {
+		"name": "胃癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C16"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"43.4",
+					"43.5",
+					"43.6",
+					"43.7",
+					"43.8",
+					"43.9"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"lc": {
+		"name": "肺癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C34"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"32.2",
+					"32.3",
+					"32.4",
+					"32.5",
+					"32.6",
+					"32.9"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"tc": {
+		"name": "甲状腺癌（手术治疗）",
+		"group": "肿瘤(手术治疗)",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C37"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"06.2",
+					"06.3",
+					"06.4",
+					"06.5"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"all": {
+		"name": "儿童急性淋巴细胞白血病（初始诱导化疗）",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C91.0"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"99.25"
+				]
+			},
+			"min_age": 0,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"apl": {
+		"name": "儿童急性早幼粒细胞白血病（初始化疗）",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C92.4"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"99.25"
+				]
+			},
+			"min_age": 0,
+			"max_age": 17
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"dvt": {
+		"name": "围手术期预防深静脉血栓栓塞",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"35.00",
+					"35.01",
+					"35.02",
+					"35.03",
+					"35.04",
+					"35.20",
+					"35.21",
+					"35.22",
+					"35.23",
+					"35.24",
+					"35.25",
+					"35.26",
+					"35.27",
+					"35.28",
+					"81.01",
+					"81.02",
+					"81.03",
+					"81.04",
+					"81.05",
+					"81.06",
+					"81.07",
+					"81.08",
+					"81.34",
+					"81.35",
+					"81.36",
+					"81.37",
+					"81.38",
+					"43.6",
+					"43.7",
+					"43.8",
+					"43.9",
+					"45.7",
+					"48.5",
+					"48.6",
+					"50.3",
+					"55.4",
+					"55.5",
+					"57.6",
+					"57.7",
+					"65.2",
+					"65.3",
+					"65.4",
+					"65.5",
+					"65.6",
+					"68.2",
+					"68.3",
+					"68.4",
+					"68.5",
+					"68.6",
+					"68.7",
+					"68.8",
+					"00.7",
+					"81.51",
+					"81.52",
+					"81.53",
+					"00.80",
+					"00.81",
+					"00.82",
+					"00.83",
+					"81.54",
+					"81.55",
+					"36.1"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"hbips": {
+		"name": "住院精神疾病",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"F00",
+				"F01",
+				"F02",
+				"F03",
+				"F04",
+				"F05",
+				"F06",
+				"F07",
+				"F08",
+				"F09",
+				"F10",
+				"F11",
+				"F12",
+				"F13",
+				"F14",
+				"F15",
+				"F16",
+				"F17",
+				"F18",
+				"F19",
+				"F20",
+				"F21",
+				"F22",
+				"F23",
+				"F24",
+				"F25",
+				"F26",
+				"F27",
+				"F28",
+				"F29",
+				"F30",
+				"F31",
+				"F32",
+				"F33",
+				"F34",
+				"F35",
+				"F36",
+				"F37",
+				"F38",
+				"F39",
+				"F40",
+				"F41",
+				"F42",
+				"F43",
+				"F44",
+				"F45",
+				"F46",
+				"F47",
+				"F48",
+				"F49",
+				"F50",
+				"F51",
+				"F52",
+				"F53",
+				"F54",
+				"F55",
+				"F56",
+				"F57",
+				"F58",
+				"F59",
+				"F60",
+				"F61",
+				"F62",
+				"F63",
+				"F64",
+				"F65",
+				"F66",
+				"F67",
+				"F68",
+				"F69",
+				"F70",
+				"F71",
+				"F72",
+				"F73",
+				"F74",
+				"F75",
+				"F76",
+				"F77",
+				"F78",
+				"F79",
+				"F80",
+				"F81",
+				"F82",
+				"F83",
+				"F84",
+				"F85",
+				"F86",
+				"F87",
+				"F88",
+				"F89",
+				"F90",
+				"F91",
+				"F92",
+				"F93",
+				"F94",
+				"F95",
+				"F96",
+				"F97",
+				"F98",
+				"F99"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_365_days": true,
+			"diagnosis": []
+		}
+	},
+	"hbv": {
+		"name": "HBV 感染分娩母婴阻断",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"Z37"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"O98.4",
+					"O98.1",
+					"B24",
+					"Z22.5",
+					"O80",
+					"O81",
+					"O82",
+					"O83",
+					"O84",
+					"72.0",
+					"72.1",
+					"72.2",
+					"72.3",
+					"72.4",
+					"72.5",
+					"72.6",
+					"72.7",
+					"72.8",
+					"72.9",
+					"73.0",
+					"73.1",
+					"73.21",
+					"73.4",
+					"73.5",
+					"73.6",
+					"73.9",
+					"74.0",
+					"74.1",
+					"74.2",
+					"74.4",
+					"74.99"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_90_days": true,
+			"diagnosis": []
+		}
+	},
+	"pip": {
+		"name": "围手术期预防感染",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"06.2",
+					"06.3",
+					"06.4",
+					"06.5",
+					"80.6",
+					"13.0",
+					"13.1",
+					"13.2",
+					"13.3",
+					"13.4",
+					"13.5",
+					"13.6",
+					"13.7",
+					"13.8",
+					"13.9",
+					"17.11",
+					"17.12",
+					"17.13",
+					"17.21",
+					"17.22",
+					"17.23",
+					"17.24",
+					"53.00",
+					"53.01",
+					"53.02",
+					"53.03",
+					"53.04",
+					"53.05",
+					"53.06",
+					"53.07",
+					"53.08",
+					"53.09",
+					"53.10",
+					"53.11",
+					"53.12",
+					"53.13",
+					"53.14",
+					"53.15",
+					"53.16",
+					"53.17",
+					"85.2",
+					"85.3",
+					"85.4",
+					"38.1",
+					"81.1",
+					"01.24",
+					"80.50",
+					"80.51",
+					"80.52",
+					"80.53",
+					"80.54",
+					"80.55",
+					"80.56",
+					"80.57",
+					"80.58",
+					"80.59",
+					"03.53",
+					"21.72",
+					"76.72",
+					"76.73",
+					"76.74",
+					"76.75",
+					"76.76",
+					"76.77",
+					"76.78",
+					"76.79",
+					"79.30",
+					"79.31",
+					"79.32",
+					"79.33",
+					"79.34",
+					"79.35",
+					"79.36",
+					"79.37",
+					"79.38",
+					"79.39",
+					"76.94",
+					"79.8",
+					"78.5",
+					"78.6",
+					"65.2",
+					"65.3",
+					"65.4",
+					"65.5",
+					"65.6",
+					"83.11",
+					"83.12",
+					"83.13",
+					"83.14",
+					"62.0",
+					"62.1",
+					"62.2",
+					"62.3",
+					"62.4",
+					"62.5",
+					"62.6",
+					"62.7",
+					"62.8",
+					"62.9",
+					"64.0",
+					"64.1",
+					"64.2",
+					"64.3",
+					"64.4",
+					"35.62",
+					"35.61",
+					"00.7",
+					"81.51",
+					"81.53"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_365_days": true,
+			"diagnosis": []
+		}
+	},
+	"sep": {
+		"name": "严重脓毒症和脓毒症休克早期治疗",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"A02.1",
+				"A22.7",
+				"A32.7",
+				"A40.0",
+				"A40.1",
+				"A40.2",
+				"A40.3",
+				"A40.4",
+				"A40.5",
+				"A40.6",
+				"A40.7",
+				"A40.8",
+				"A40.9",
+				"A41.0",
+				"A41.1",
+				"A41.2",
+				"A41.3",
+				"A41.4",
+				"A41.5",
+				"A41.6",
+				"A41.7",
+				"A41.8",
+				"A41.9",
+				"A42.7",
+				"A54.8",
+				"B37.7"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": []
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_365_days": true,
+			"diagnosis": []
+		}
+	},
+	"tn": {
+		"name": "甲状腺结节（手术治疗）",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"D34",
+				"E04.0",
+				"E04.1",
+				"E04.2"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"06.2",
+					"06.3",
+					"06.4",
+					"06.5"
+				]
+			},
+			"min_age": 18,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_365_days": true,
+			"diagnosis": [
+				"C73"
+			]
+		}
+	},
+	"vte": {
+		"name": "中高危风险患者预防静脉血栓栓塞症",
+		"group": "其他疾病/手术",
+		"if_conditions": {
+			"main_diagnosis": [
+				"C00-C97",
+				"A40.0",
+				"A40.1",
+				"A40.2",
+				"A40.3",
+				"A40.8",
+				"A40.9",
+				"A41.0",
+				"A41.1",
+				"A41.2",
+				"A41.3",
+				"A41.4",
+				"A41.5",
+				"A41.8",
+				"A41.9",
+				"R65.2",
+				"R65.3",
+				"R65.9"
+			],
+			"other_diagnosis": [],
+			"main_operation": {
+				"门诊": [],
+				"住院": [
+					"96.7",
+					"93.90",
+					"93.91",
+					"89.60",
+					"89.60",
+					"89.61",
+					"89.62",
+					"89.63",
+					"89.64",
+					"89.65",
+					"89.66",
+					"89.67",
+					"89.68",
+					"89.69",
+					"39.95"
+				]
+			},
+			"min_age": 70,
+			"max_age": 200
+		},
+		"discard_conditions": {
+			"back_in_30_days": true,
+			"hospital_over_365_days": true,
+			"diagnosis": [
+			]
+		}
+	}
+}
