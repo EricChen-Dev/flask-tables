@@ -31,7 +31,12 @@ def generate(date_from="2021/01/01", date_to="2021/05/01"):
 
 		# 结果
 		if matched:
+			db.execute('update Patients set DBZ_CODE = ? where SBM = ?', (matched, case['SBM']))
+			db.commit()
 			print("SBM: {}, matched dbz code: {}".format(case['SBM'], matched))
+		else:
+			db.execute('update Patients set DBZ_CODE = ? where SBM = ?', ("", case['SBM']))
+			db.commit()
 
 
 def get_basic_info(case):

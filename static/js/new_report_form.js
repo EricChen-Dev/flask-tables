@@ -28,17 +28,26 @@ var formVue = {
                 return this.form[id];
         },
         getZdmData(main, id) {
-            // console.log(this.zdmJson[main])
-            return this.zdmJson[main].data.find(item => item.id === id)
+            return this.zdmJson[main].data.find(item => item['字段名称'] === id)
         },
         matchShowCondition(main, zdm_id) {
-            let zdm = this.getZdmData(main, zdm_id)
-
-            if (zdm.related_id === null || zdm.related_id === '') {
+            let zdm = Object.assign({}, this.getZdmData(main, zdm_id))
+            zdm.related_id = zdm['关联表']
+            zdm.related_id_condition = zdm['关联条件']
+            if (zdm.related_id === null && zdm.related_id_condition === null) {
                 return true
+            } else if (zdm.related_id !== null && zdm.related_id === zdm['字段名称']) {
+                //等于自己的情况
+                return true
+            } else if (zdm.related_id !== null && zdm.related_id_condition === null) {
+                //当相关项为空时
+                return this.form[zdm.related_id] === undefined || this.form[zdm.related_id] === '' || this.form[zdm.related_id] === null || this.form[zdm.related_id] !== 'UTD';
             } else if (zdm.related_id_condition === this.form[zdm.related_id]) {
                 return true
-            } else if (zdm.related_id_condition.includes("/")) {
+            }
+            else if (this.form[zdm.related_id].includes(zdm.related_id_condition))
+                return true
+             else if (zdm.related_id_condition.includes("/")) {
                 let conditions = zdm.related_id_condition.split("/")
                 return !!conditions.includes(this.form[zdm.related_id]);
             }
@@ -83,14 +92,12 @@ var formVue = {
                 }
             });
         },
-        saveAsDraft() {
+        saveAsDraft(status) {
             //    保存为草稿不作验证
             let data = Object.assign({}, this.form);
             data.IDCard = patient["SFZH"];
             let postData = {
                 sbm: patient.SBM,
-                dbz: dbz.id,
-                dbz_name: dbz.name,
                 cykb: patient.CYKB,
                 zzys: patient.ZZYS,
                 zzysks: zzys.major,
@@ -98,6 +105,10 @@ var formVue = {
                 finishedDate: '',
                 status: '草稿',
                 data: data
+            }
+            if (status === 'ignore') {
+                // 如果点击的废弃按钮
+                postData.status = '废弃'
             }
 
             axios.post(window.location.pathname + window.location.search, postData)
@@ -111,10 +122,10 @@ var formVue = {
                     this.loading = false;
                 })
         },
-        reformatDate(date){
+        reformatDate(date) {
             //格式 yyyy/MM/dd HH:MM:SS
-            return date.getFullYear() +"/"+ (date.getMonth()+1) +"/"+ date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        }
+            return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        },
     },
     beforeMount() {
         // 初始化表单规则，别删那个temp
@@ -122,21 +133,19 @@ var formVue = {
         for (let key in zdm) {
             for (let item of zdm[key]['data']) {
                 // 这里可以预填表格
-                if (item['type'] === '字符串') {
-                    temp[item['id']] = '';
-                } else if (item['type'] === '数组') {
-                    temp[item['id']] = [];
-                } else if (item['sql_type'] === 'datetime') {
-                    temp[item['id']] = '';
+                if (item['数据类型'] === '数组') {
+                    temp[item['字段名称']] = [];
+                } else if (item['数据类型'] === '数值') {
+                    temp[item['字段名称']] = 0;
                 } else {
-                    temp[item['id']] = '';
+                    temp[item['字段名称']] = '';
                 }
                 // 根据第五列是否为必填
-                if (item['nullable'] !== "是") {
+                if (item['上传时不能为空'] === "是") {
                     // 如果是'是'，则在rules新建规则字典，key为id，如CS-1-1-1
-                    this.rules[item['id']] = [{
+                    this.rules[item['字段名称']] = [{
                         required: true,
-                        message: item['name'] + "是必填项", trigger: 'change'
+                        message: item['数据采集项目'] + "是必填项", trigger: 'change'
                     }];
                 }
             }
@@ -147,30 +156,40 @@ var formVue = {
         this.options = {};
         for (let item of xz) {
             //遍历xz，将选项加入到对应options的键值对中
-            if (this.options[item['dbz_id']]) {  // 如果已存在键值
-                this.options[item['dbz_id']].push({value: item['option'], label: item['label']});
+            if (this.options[item['关联表']]) {  // 如果已存在键值
+                this.options[item['关联表']].push({value: item['选择项'], label: item['值内容']});
             } else {
                 // 未存在此键值，则新建键值和数组
-                this.options[item['dbz_id']] = [];
-                this.options[item['dbz_id']].push({value: item['option'], label: item['label']});
+                this.options[item['关联表']] = [];
+                this.options[item['关联表']].push({value: item['选择项'], label: item['值内容']});
             }
         }
 
-        // 预填表格 - hard code
-        this.form["SBM"] = patient["SBM"];
-        this.form["CM-0-1-1-1"] = patient["ZKYS"] //质控医师
-        this.form["CM-0-1-1-2"] = patient["ZKHS"] //质控护士
-        this.form["CM-0-1-1-3"] = patient["ZZYS"] //主治医师
-        this.form["CM-0-1-1-4"] = patient["ZRHS"] //责任护士
-        this.form["CM-0-1-1-5"] = major //上报科室
-        this.form["caseId"] = patient["BAH"] //患者病案号
-        this.form["IDCard"] = this.replaceZfz(patient["SFZH"]) //患者身份证号
-        this.form["CM-0-2-1-1"] = patient["CSNYR"] //出生年月日
-        this.form["CM-0-2-1-6"] = patient["XSDCSTZ"] //新生儿出生体重（克）
-        this.form["CM-0-2-4-1"] = patient["RYSJ"] //入院日期时间
-        this.form["CM-0-2-4-2"] = patient["CYSJ"] //出院日期时间
-        // this.form["CM-0-3-1"] = patient["ZKYS"] //费用支付方式
-        // this.form["CM-0-1-1-1"] = patient["ZKYS"] //质控医师
+        for (let item in zdm) {
+            for (let row of zdm[item].data) {
+                console.log(row)
+
+                if (row['预填字段'] !== null) {
+                }
+            }
+        }
+
+        // for (var group in zdm) {
+        //     for (let row of zdm[group].data) {
+        //         if (row['预填字段'] !== null) {
+        //             console.log(row)
+        //
+        //             if (row['数据类型'] === '数组') {
+        //                 console.log(this.options[row['字段名称']])
+        //                 this.form[row['字段名称']].append()
+        //             } else {
+        //                 this.form[row['字段名称']] = patient[0][row['预填字段']]
+        //             }
+        //
+        //         }
+        //     }
+        // }
+
 
         this.zdmJson = zdm;
 

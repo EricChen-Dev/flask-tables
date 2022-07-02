@@ -25,8 +25,8 @@ class ConfigClass(object):
     flask application configuration class
     flask全局配置类
     """
-	# flask settings
-	SECRET_KEY = 'DO NOT USE IN PRODUCTION'
+	#	flask settings
+	SECRET_KEY = 'DO NOT USE IN PRODUCTION SECRETS SECRETS SECRETS SECRETS'
 
 	# sqlalchemy 数据库链接
 	SQLALCHEMY_DATABASE_URI = 'sqlite:///db/test.db'
@@ -41,7 +41,7 @@ class ConfigClass(object):
 	USER_LOGIN_URL = '/login'  # 登录路由
 	USER_LOGOUT_URL = '/logout'  # 登出路由
 	USER_REGISTER_URL = '/register'  # 注册用户路由
-
+	USER_CHANGE_PASSWORD_URL = '/updatepwd'
 
 def create_app():
 	"""flask app generator"""
@@ -73,17 +73,17 @@ def create_app():
 	@app.route('/')
 	def hello_world():
 		"""主页"""
-		return 'Hello World!'
+		return "Hello World!<br><a href='/main'>Main Page</a>"
 
 	# /main路径只能登陆的用户看到
 	@app.route('/main')
 	@login_required
 	def main_table():
 		# 这里请求得到数据库数据，这里以数据文件为例
-		cursor_results = get_db().cursor().execute("select * from Patients where ZZYS = '{0}' limit "
-												   "200".format(current_user.xm)).fetchall()
+		cursor_results = get_db().cursor().execute("select * from Patients where ZZYS = '{0}' "
+												   "limit "
+												   "1000".format(current_user.xm)).fetchall()
 		major_cases = db_connection.get_cases_with_same_major(current_user.major)
-		print(len(major_cases))
 		return render_template('index_table.html', tableData=cursor_results, major_cases=major_cases)
 
 	@app.route('/main/edit', methods=["POST"])
@@ -94,7 +94,10 @@ def create_app():
 		print(request_data)
 		# 这里sbm帮助定位
 		sbm_id = request_data['SBM']
-		return {'msg': '修改失败'}, 400
+
+		if not sbm_id:
+			# 如果无sbm，无法修改信息
+			return {'msg': '修改失败'}, 400
 
 		# 更改DB数据
 		update_sql = "update Patients " \
@@ -148,7 +151,8 @@ def create_app():
 	@app.context_processor
 	def my_utility_processor():
 		def existsInXzLists(target, lists):
-			return any(target == sublist['dbz_id'] for sublist in lists)
+			return any(target == sublist['关联表'] for sublist in lists), len(list(filter(lambda x: x['关联表'] ==
+																									target,lists)))
 
 		def grouper(n, iterable_list, compared_list, fillValue=None):
 			reorganised = iterable_list.copy()

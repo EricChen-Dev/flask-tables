@@ -165,7 +165,7 @@ def reformat():
 					except IntegrityError:
 						db.rollback()
 
-				# 写入dbz_and_dbz_zd表格用于join
+				写入dbz_and_dbz_zd表格用于join
 				try:
 					if not db.execute("select * from dbz_and_dbz_zd where dbz_id=? and dbz_zd_id=?",
 					                  (dbz_id, row[1])).fetchall():

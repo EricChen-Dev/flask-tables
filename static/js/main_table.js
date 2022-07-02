@@ -22,8 +22,11 @@ var tablesVue = {
 
             loading: true,
 
-            show_major_cases: false
-        };
+            show_major_cases: false,
+            zzysFilterSelections: [],
+            cykbFilterSelections: [],
+        }
+
     },
     methods: {
         editRow(row) {
@@ -143,32 +146,55 @@ var tablesVue = {
                 background: 'rgba(255,255,255, 0.6)'
             });
         },
-        changeMajorCases(showMajor){
-          //    是否显示本科室病例
-            if(showMajor){
+        changeMajorCases(showMajor) {
+            //    是否显示本科室病例
+            if (showMajor) {
 
             }
 
         },
-        filterStatus(value, row){
-        // 填报状态列筛选方法
-            if(row.TBZT === value){
+        filterStatus(value, row) {
+            // 填报状态列筛选方法
+            if (row.TBZT === value) {
                 return true;
-            }
-            else return !!value.includes(row.TBZT);
+            } else return !!value.includes(row.TBZT);
         },
-        statusTagType(status){
-            let outcome = status === '未填报' ? 'danger' : ((scope.row.TBZT === '草稿')?('warning'):('success'))
+        statusTagType(status) {
+            let outcome = status === '未填报' ? 'danger' : ((scope.row.TBZT === '草稿') ? ('warning') : ('success'))
+        },
+        cykbFilterMethod(value, row) {
+            return row.CYKB === value;
+        },
+        zzysFilterMethod(value, row) {
+            return row.ZZYS === value;
         }
 
     },
     mounted() {
         this.loading = true;
         // mounted最开始运行，将数据解析为json为js可用，并运行第一次currentPageChangeInner()
-        console.log(metaTableListData)
         this.table_data = metaTableListData;
         this.totalRecordsCount = this.table_data.length;
         this.currentPageChangeInner(this.table_data, this.currentPage); //获取第一页20行数据
+
+
+        // 主治医师
+        // 出院科别
+        let zzysFilter = [];
+        let cykbFilter = []
+        this.table_data.forEach(function (value) {
+
+            if (zzysFilter.filter(zzys => zzys.value === value.ZZYS).length === 0)
+                zzysFilter.push({text: value.ZZYS, value: value.ZZYS})
+            if (cykbFilter.filter(cykb => cykb.value === value.CYKB).length === 0)
+                cykbFilter.push({text: value.CYKB, value: value.CYKB})
+        })
+        console.log(zzysFilter)
+        console.log(cykbFilter)
+        this.zzysFilterSelections = Object.assign([], zzysFilter)
+        this.cykbFilterSelections = Object.assign([], cykbFilter)
+
+
     }
 };
 

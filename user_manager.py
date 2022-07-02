@@ -3,7 +3,7 @@ import uuid
 from flask import abort, redirect, render_template, request
 
 from flask_login import current_user, login_user, logout_user
-from flask_user import UserManager, UserMixin, login_required, user_manager
+from flask_user import UserManager, UserMixin, login_required, roles_required, user_manager
 from model import *
 
 
@@ -59,8 +59,8 @@ class CustomUserManager(UserManager):
 			if not User.query.filter(User.username == username).first():
 				# 如果这个用户名不存在，新建用户并保存至数据库
 				new_user = User(id=str(uuid.uuid4()), username=username,
-				                password=UserManager.hash_password(self, password),
-				                xm=xm, major=major)
+								password=UserManager.hash_password(self, password),
+								xm=xm, major=major)
 				new_user.roles.append(Role(name='Other_Role'))  # 这里赋予角色
 				# new_user.roles.append(Role(name='Other_Role2'))  # 这里赋予角色
 				db.session.add(new_user)
@@ -73,6 +73,25 @@ class CustomUserManager(UserManager):
 
 			else:
 				return {'outcome': False, 'msg': '用户名已被占用'}
+
+	@roles_required(['Admin'])
+	def change_password_view(self):
+		"""更新用户密码"""
+		if request.method == 'GET':
+			return render_template('update_password.html')
+		else:
+			req = json.loads(request.data)
+			xm = req.get('xm')
+			major = req.get('major')
+			username = req.get('username')
+			new_password = req.get('new_password')
+			modify_user = User.query.filter(User.username == username, User.xm == xm, User.major == major).first()
+			if modify_user:
+				modify_user.password = UserManager.hash_password(self, new_password)
+				db.session.commit()
+				return {'data': True, 'msg': '修改密码成功'}
+			else:
+				return {'data': False, 'msg': '无法找到此用户'}, 200
 
 	def unauthorized_view(self):
 		return abort(401)

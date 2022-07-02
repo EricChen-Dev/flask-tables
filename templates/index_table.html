@@ -60,13 +60,29 @@
             <el-table-column prop="MJZZD" label="主要诊断">
 
             </el-table-column>
-            <el-table-column prop="ZZYS" label="主治医师">
+            <el-table-column prop="ZZYS"
+                             label="主治医师"
+                             :filters="zzysFilterSelections"
+                             :filter-method="zzysFilterMethod"
+                             filter-placement="bottom-end"
+            >
 
             </el-table-column>
             <el-table-column prop="RYSJ" label="入院日期">
 
             </el-table-column>
-            <el-table-column prop="CYSJ" label="出院日期">
+            <el-table-column prop="CYSJ"
+                             label="出院日期">
+
+            </el-table-column>
+
+            <el-table-column prop="CYKB"
+                             label="出院科别"
+                             :filters="cykbFilterSelections"
+                             :filter-method="cykbFilterMethod"
+                             filter-placement="bottom-end"
+            >
+
             </el-table-column>
 
             <el-table-column prop="TBSJ" label="填报时间">
@@ -74,19 +90,25 @@
             <el-table-column
                     prop="TBZT"
                     label="填报状态"
-                    :filters="[{text: '未填报',value: ['', '未填报']} , {text: '草稿', value: '草稿'}, {text: '已填报', value:'已填报'}]"
+                    :filters="[{text: '未填报',value: null} , {text: '草稿', value: '草稿'}, {text: '已填报', value:'已填报'}]"
                     :filter-method="filterStatus"
                     filter-placement="bottom-end"
             >
                 <template slot-scope="scope">
                     <el-tag
-{#                            type="statusTagType"#}
                             :type="scope.row.TBZT === '未填报' ? 'danger' : ((scope.row.TBZT === '草稿')?('warning'):('success'))"
                     >
-                        {* scope.row.TBZT *}
+                        <div v-if="scope.row.TBZT === null">
+                            未填报
+                        </div>
+                        <div v-else>
+                            {* scope.row.TBZT *}
+
+                        </div>
                     </el-tag>
                 </template>
             </el-table-column>
+
             <el-table-column prop="WCSJ" label="完成时间">
             </el-table-column>
             <el-table-column prop="TBRY" label="填报人员">

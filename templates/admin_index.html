@@ -1,0 +1,130 @@
+{#引入母版#}
+{% extends "admin_base.html" %}
+{#设置title#}
+{% block title %} 管理员 - 首页 {% endblock %}
+
+{% block other_head %}
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    {#    <link href="/static/style/login.css" rel="stylesheet">#}
+{% endblock %}
+
+{# HTML body内容 #}
+{% block body %}
+    <el-container>
+        <h1></h1>
+        <el-main style="height: calc(100vh - 120px); max-height:calc(100vh - 120px); scroll-behavior: smooth">
+            <el-tabs tab-position="left">
+                {# 每个大病种类，全部显示 #}
+                {% for class in structure %}
+                    <el-tab-pane label="{{ class }}">
+                        {# 每个小病种类 #}
+
+                        {# 每行4个 #}
+                        {% for items in grouper_more(4, structure[class], {}) %}
+                            <el-row :gutter="20" style="margin-bottom: 30px">
+                                {% for DictItem in items %}
+                                    <el-col :span="6" style="border-radius: 4px;">
+                                        <vs-card v-if="'{{ DictItem|length }}'!=0">
+                                            <template #title>
+                                                <h3>{{ DictItem }}</h3>
+                                            </template>
+                                            <template #img>
+                                                <img src="/static/image/report/{{ structure[class][DictItem] }}.png"
+                                                     alt=""
+                                                     style="width:100px; height:100px">
+                                            </template>
+                                            <template #text>
+                                                <p>
+                                                </p>
+                                            </template>
+                                            <template #interactions>
+                                                {% if sbm %}
+                                                    <vs-button class="btn-chat"
+                                                               href="/report/{{ structure[class][DictItem] }}?sbm={{ sbm }}">
+                                                        <template #animate>
+                                                            <i class='bx bx-upload'></i>
+                                                        </template>
+                                                        <span class="span">上 报</span>
+
+                                                    </vs-button>
+                                                {% else %}
+                                                    {# 无sbm上报 #}
+                                                    <vs-button class="btn-chat"
+                                                               href="/main?operation_id={{ structure[class][DictItem] }}">
+                                                    <template #animate>
+                                                        <i class='bx bx-upload'></i>
+                                                    </template>
+                                                    <span class="span">上 报</span>
+                                                {% endif %}
+                                                </vs-button>
+                                            </template>
+                                        </vs-card>
+                                    </el-col>
+
+                                {% endfor %}
+                            </el-row>
+
+
+                        {% endfor %}
+
+                    </el-tab-pane>
+                {% endfor %}
+            </el-tabs>
+        </el-main>
+
+    </el-container>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+    <script>
+
+        let groupStructure = {{ structure|tojson }};
+
+        var loginForm = {
+            data() {
+                return {
+                    options: [{}],
+                    value: '',
+                    tempOptions: [{}],
+                    major_structure: [],
+                    group_structure: {},
+                    more: false, //是否显示全部单病种
+                    show_confirm_dialog: false, //核对确认对话框
+
+                    activeIndex: "1"
+                }
+            },
+            methods: {
+                selected(reportId) {
+
+                },
+                handleSelect() {
+
+                },
+
+            },
+            mounted() {
+                this.options = []
+                for (let pair of Object.values(groupStructure)) {
+                    for (let children in pair) {
+                        this.options.push({key: children, value: pair[children]})
+                    }
+                }
+                this.tempOptions = Object.assign({}, this.options);
+            },
+            created() {
+                this.group_structure = Object.assign({}, groupStructure);
+
+            }
+        }
+
+        Vue.options.delimiters = ['{*', '*}'];
+        var form = Vue.extend(loginForm);
+
+        //这里是vue加载点html的id位置
+        new form().$mount('#admin_main')
+    </script>
+
+{% endblock %}

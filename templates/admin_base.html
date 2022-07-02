@@ -1,0 +1,57 @@
+{#此html为母版文件#}
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="/static/image/favicon.ico">
+
+    <!--    引入element及样式-->
+    <link rel="stylesheet" href="/static/vendor/element-ui/lib/theme-chalk/index.css">
+
+    {#  preloader样式  #}
+    <link href="/static/style/loader.css" rel="stylesheet">
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    {% block other_head %}{% endblock %}
+</head>
+<body style="scroll-behavior: smooth; margin: 0">
+<div id="admin_main">
+    <el-menu :default-active="activeIndex" class="el-menu-demo"
+             mode="horizontal"
+             @select="handleSelect"
+             background-color="#545c64"
+             text-color="#fff"
+             active-text-color="#ffd04b">
+        <el-menu-item index="1"><a href="/admin">处理中心</a></el-menu-item>
+        <el-menu-item index="2"><a href="/updatepwd">更改用户密码</a></el-menu-item>
+        <el-menu-item index="3"><a href="/logout">注销</a></el-menu-item>
+    </el-menu>
+    {% block body %}
+
+    {% endblock %}
+</div>
+
+</body>
+
+{#引入jquery#}
+<script src="/static/vendor/jQuery/jquery.min.js"></script>
+<script src="/static/vendor/jQuery/jquery.easing.min.js"></script>
+
+
+<!--引入vue-->
+<script src="/static/vendor/vue/vue.js"></script>
+<!--引入element js-->
+<script src="/static/vendor/element-ui/lib/index.js"></script>
+<script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+<script src="/static/vendor/axios/dist/axios.min.js"></script>
+
+{#其他script位置#}
+
+{% block script %}
+{% endblock %}
+
+
+</html>

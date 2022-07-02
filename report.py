@@ -26,7 +26,6 @@ def report_event():
 	# 分组情况
 	group_structure = json.load(open('static/datafile/report_structure.json'), encoding='utf-8')
 
-	print(group_structure)
 	return render_template('report_page.html', sbm=SBM, structure=group_structure,
 						   major_structure=major_report_structure)
 
@@ -44,17 +43,36 @@ def new_form(operation_id):
 		# 单病种字段数据
 		zdmData = db_connection.generate_report_by_dbz(operation_id)
 		dbz_name = db_connection.get_dbz(operation_id)
-		reorganised_zdm, groups = reorganise(zdmData)
-		# 单病种字段选项
-		xzData = db_connection.generate_report_options_by_dbz(operation_id)
 
+		# reorganised_zdm, groups = reorganise(zdmData)
+
+		# 单病种字段选项
+		# xzData = db_connection.generate_report_options_by_dbz(operation_id)
+		xzData = json.load(open('static/datafile/test/xz.json', encoding='utf-8'))
 		if reported_sbm:
 			# 从数据库摘取这条信息
 			patientData = db_connection.get_patient_case(reported_sbm)
 			zzys = db_connection.get_user(patientData['ZZYS'])
-			return render_template('new_report_form.html', zdm=reorganised_zdm, xz=xzData, groups=groups,
-								   patient=patientData, major=current_user.major, user_name=current_user.xm,
-								   dbz_name=dbz_name, zzys=zzys)
+			zdmData = json.load(open('static/datafile/test/cs_zdm.json', encoding='utf-8'))
+			reorganised_zdm = reorganised_2(zdmData)
+
+			return render_template('new_report_form_2.html',
+								   zdm=reorganised_zdm,
+								   xz=xzData,  # 选择型字段选择项
+								   patient=patientData,
+								   dbz_name=dbz_name,  # 单病种名称
+								   zzys=zzys  # 主治医师
+								   )
+
+		# return render_template('new_report_form.html',
+		# 					   zdm=reorganised_zdm,  # 分组及字段，字段类型，字段在报告中出现的条件等
+		# 					   xz=xzData,  # 选择型字段选择项
+		# 					   groups=groups,  # 分组信息，这个可能不需要
+		# 					   patient=patientData,  # 病人信息
+		# 					   major=current_user.major,  # 主治医生专业
+		# 					   user_name=current_user.xm,  # 现在的用户姓名
+		# 					   dbz_name=dbz_name,  # 单病种名称
+		# 					   zzys=zzys)  # 主治医师
 		else:
 			# sbm为空，代表没有选择病例，跳转病例选择页面，并传递operation_id（单病种id）
 			return redirect(url_for('main_table', operation_id=operation_id))
@@ -72,7 +90,7 @@ def new_form(operation_id):
 		finishedDate = request_data['finishedDate']  # 完成日期
 		status = request_data['status']  # 状态
 		data = request_data['data']  # 表格数据
-		print(request_data)
+		sbks = current_user.major  # 上报科室
 
 		return {'outcome': True, 'next': '/main'}, 200
 
@@ -83,7 +101,7 @@ def save_as_draft():
 	"""处理草稿箱"""
 	if request.method == 'POST':
 		request_data = json.loads(request.data)
-		# 	传入数据和new_form post一样，但finished date为空，状态为草稿
+		# 	传入数据和new_form post一样，但finished date为空，状态为草稿或废弃
 		return {'outcome': True, 'next': '/main'}, 200
 	elif request.method == 'GET':
 		# TODO 提取所有草稿为Array并作为drafts变量传递
@@ -116,9 +134,48 @@ def reorganise(zdmData):
 	organised_zdm = dict()
 	group = dict()
 	for data in zdmData:
+		# print(data)
 		key = data['group']
 		if not organised_zdm.get(key):
-			organised_zdm[key] = {"name": data['group_name'], "data": []}
-			group[key] = data['group_name']
-		organised_zdm[key]['data'].append(data)
+			# 过滤是否已存在基本信息
+			jbxx_key = next((key for key, value in organised_zdm.items() if value['name'] == '基本信息'), None)
+			if data['group_name'] == '基本信息' and jbxx_key:
+				# 	如果存在已基本键值对，并且本行也是基本信息
+				organised_zdm[jbxx_key]['data'].append(data)
+			else:
+				organised_zdm[key] = {"name": data['group_name'], "data": [data]}
+				group[key] = data['group_name']
+		else:
+			organised_zdm[key]['data'].append(data)
+
+	print(organised_zdm)
 	return organised_zdm, group
+
+
+def reorganised_2(zdmData):
+	organised_zdm = dict()
+	rawData = []
+	for row in zdmData.values():
+		rawData = rawData + row['data']
+
+	for data in rawData:
+		key = data['分组代号']
+		# print(key)
+		if not organised_zdm.get(key):
+			# 过滤是否已存在分组名称
+			duplicated_key = next((key for key, value in organised_zdm.items() if value.get('数据采集项目') == data[
+				'分组名称']), None)
+			if duplicated_key:
+				organised_zdm[duplicated_key]['data'].append(data)
+			else:
+				organised_zdm[key] = {"数据采集项目": data['分组名称'], "data": [data]}
+
+		else:
+			organised_zdm[key]['data'].append(data)
+
+	organised_zdm = dict(sorted(organised_zdm.items()))
+
+	for x in organised_zdm:
+		organised_zdm[x]['data'] = sorted(organised_zdm[x]['data'], key=lambda y: y['字段名称'])
+
+	return organised_zdm

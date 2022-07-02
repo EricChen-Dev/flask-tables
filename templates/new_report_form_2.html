@@ -1,0 +1,216 @@
+{#引入母版#}
+{% extends "table_base.html" %}
+{#设置title#}
+{% block title %}{{ patient['XM'] }}{% endblock %}
+{% block other_head %}
+    <link href="/static/vendor/vuesax/dist/vuesax.css" rel="stylesheet">
+    <link href='/static/vendor/boxicons/css/boxicons.min.css' rel='stylesheet'>
+{% endblock %}
+{# HTML body内容 #}
+{% block body %}
+    <div id="new_report_form">
+        <el-container>
+            <el-header style="text-align: center; font-size: 12px; background-color: #b2bac3">
+                <el-row :gutter="20" justify="end" style="padding-top: 10px" align="middle" type="flex">
+                    <el-link href="/logout"><i class='bx bx-log-out'></i>注 销</el-link>
+
+                </el-row>
+            </el-header>
+        </el-container>
+
+        <el-container>
+            {# 左侧导航栏 #}
+            <el-aside width="60">
+                <vs-sidebar
+                        absolute
+                        hover-expand {# hover展开模式 #}
+                        reduce
+                        v-model="active"
+                        open {# 默认打开状态 #}
+                        dark {# 选中时为黑色 #}
+                >
+                    <template #logo>
+                        {# 这里放医院的logo #}
+                        <i class='bx bxs-cookie bx-lg' style="font-size: x-large;"></i>
+                    </template>
+                    {% for group_item in zdm %}
+                        <vs-sidebar-item
+                                id="{{ group_item }}"
+                                @click.native="moveToAnchor('{{ group_item }}')"
+                        >
+                            {# 侧边栏顶部LOGO #}
+                            <template #icon>
+                                <i class='bx bx-grid-alt'></i>
+
+                            </template>
+                            {{ zdm[group_item]['数据采集项目'] }}
+                        </vs-sidebar-item>
+                    {% endfor %}
+
+                </vs-sidebar>
+
+            </el-aside>
+
+            {#       主要内容     #}
+            <el-main
+                    style="max-height:calc(100vh - 120px); scroll-behavior: smooth;">
+                {#          单病种名称         #}
+                <el-row style="width: 100%; min-height: 20px">
+                    <h1 style="text-align: center">{{ dbz_name['name'] }}</h1>
+                </el-row>
+
+                <el-row style="width:100%;min-width:80%; margin-top: 50px;" align="middle" justify="center" type="flex">
+                    <el-form
+                            ref="form"
+                            :model="form"
+                            :rules="rules"
+                            label-width="390px"
+                            label-position="left"
+                            style=" max-width: 70%; min-width: 200px">
+
+                        {#         病种字段           #}
+                        {% for key in zdm %}
+                            <el-card shadow="hover"
+                                     style="border-radius: 25px; margin-top: 20px; padding-left: 10px;">
+
+                                {#            小节标题            #}
+                                <h3 id="{{ key }}"
+                                    style="margin: 20px 0 35px; font-weight: 400; color: #1f2f3d">
+                                    {{ zdm[key]['数据采集项目'] }}
+                                </h3>
+
+
+                                {% for item in zdm[key].data %}
+                                    {% set id = item['字段名称'] %}
+                                    <el-popover
+                                            placement="right"
+                                            title="可能关联项"
+                                            width="200"
+                                            trigger="focus"
+                                            content="{{ item['数据采集项目'] }}"
+                                            v-if="matchShowCondition('{{ key }}','{{ id }}')"
+                                    >
+                                        <el-form-item
+                                                slot="reference"
+                                                label="{{ item['数据采集项目'] }}"
+                                                id="{{ id }}"
+                                                prop="{{ id }}"
+                                                {#v-if为此条出现条件#}
+                                                v-if="matchShowCondition('{{ key }}','{{ id }}')"
+                                        >
+                                            {% if existsInXzLists(id, xz)[0] %}
+                                                {% if existsInXzLists(id, xz)[1] == 1 and '是否' in item['数据采集项目'] %}
+                                                    <el-radio-group v-model="form['{{ id }}'][0]" >
+                                                        <el-radio :label="options['{{ id }}'][0].value">{*
+                                                            options['{{ id }}'][0].label
+                                                            *}
+                                                        </el-radio>
+                                                        <el-radio label="">是</el-radio>
+                                                    </el-radio-group>
+
+                                                {% elif item['数据类型'] != '数组' %}
+                                                    {# 如果xz有输入要求并且在xz中可以选择#}
+                                                    <el-select v-model="form['{{ id }}']" placeholder="请选择"
+                                                               :automatic-dropdown="false"
+                                                               style="min-width: 200px; max-width: 90%; width: 800px">
+                                                        <el-option
+                                                                v-for="option in options['{{ id }}']"
+                                                                :key="option.value"
+                                                                :label="option.label"
+                                                                :value="option.value"
+                                                        ></el-option>
+                                                    </el-select>
+                                                {% else %}
+                                                    {#多选项#}
+                                                    <el-checkbox-group v-model="form['{{ id }}']">
+                                                        <el-checkbox
+                                                                v-for="option in options['{{ id }}']"
+                                                                :label="option.value"
+                                                                :key="option.value"
+                                                                style="text-overflow:ellipsis"
+                                                        >
+                                                            {# 这里用vue的分隔符，注意修改最后的js#}
+                                                            {*option.label*}
+                                                        </el-checkbox>
+                                                    </el-checkbox-group>
+                                                {% endif %}
+                                            {% elif item['数据类型'] == '数值' %}
+                                                {# 如果是费用类型，用浮点数，保留两位 #}
+                                                {% if '费' in item['数据采集项目'] %}
+                                                    <el-input-number v-model="form['{{ id }}']" :controls="false"
+                                                                 :precision="2"
+                                                                     :min="0"></el-input-number>
+                                                {% else %}
+                                                    <el-input-number v-model="form['{{ id }}']" :controls="false"
+                                                                 :precision="0"
+                                                                 :min="0"></el-input-number>
+                                                {% endif %}
+
+                                            {% elif '日期' in item['数据采集项目'] or '时间' in item['数据采集项目'] %}
+                                                <el-date-picker
+                                                        v-model="form['{{ id }}']"
+                                                        type="datetime"
+                                                        format="yyyy/MM/dd HH:mm"
+                                                        value-format="yyyy/MM/dd HH:mm"
+                                                        placeholder="选择日期时间">
+                                                </el-date-picker>
+
+                                            {% else %}
+                                                {#                                        都不是则为普通字符串输入#}
+                                                {% if item['max'] != '' and item['max'] != None %}
+                                                    <el-input v-model="form['{{ id }}']"
+                                                              style="min-width: 200px; max-width: 90%"></el-input>
+                                                {% else %}
+                                                    <el-input v-model="form['{{ id }}']"
+                                                              style="min-width: 200px; max-width: 90%"
+                                                    ></el-input>
+                                                {% endif %}
+                                            {% endif %}
+
+                                        </el-form-item>
+                                    </el-popover>
+
+                                {% endfor %}
+                            </el-card>
+                        {% endfor %}
+
+                    </el-form>
+                </el-row>
+
+            </el-main>
+
+        </el-container>
+        <el-footer style="text-align: center; font-size: 12px; background-color: rgba(84,92,100,0.8)">
+            <el-button type="primary" style="margin-top: 10px" @click="submit">提 交</el-button>
+            <el-button style="margin-top: 10px; margin-left:20px" @click="saveAsDraft('draft')">存为草稿</el-button>
+            <el-button type="danger" style="margin-top: 10px; margin-left:20px" @click="saveAsDraft('ignore')">废弃</el-button>
+        </el-footer>
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+    {#    sidebar 部件#}
+    <script src="/static/vendor/vuesax/dist/vuesax.js"></script>
+    <script>
+        let zdm = {{zdm|tojson}}; //js得到服务器端数据
+        let xz = {{xz|tojson}}; //js得到服务器端数据
+
+        {#let groups =#}
+        {#    {{ groups|tojson }}; // 分组信息#}
+        let patient =
+            {{ patient|tojson }}; //病人信息
+
+        let major = "{{ major }}"; //上传科室
+
+        let dbz = {{ dbz_name|tojson }}; //病种名和id
+        let txys = '{{ user_name }}'; //填写医生
+        let zzys =
+        {{ zzys|tojson }}
+
+    </script>
+    <script src="/static/js/new_report_form.js"></script>
+
+{% endblock %}
